@@ -122,6 +122,21 @@ const envDefinitions = {
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_IOTA_NODE: {
+    parser: stringParser,
+    def: "https://chrysalis-nodes.iota.org",
+    desc: "IOTA API url",
+  },
+  API_SHIMMER_NODE: {
+    parser: stringParser,
+    def: "https://api.shimmer.network",
+    desc: "SHIMMER API url",
+  },
+  API_SHIMMER_TESTNET_NODE: {
+    parser: stringParser,
+    def: "https://api.testnet.shimmer.network",
+    desc: "SHIMMER TESTNET API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
