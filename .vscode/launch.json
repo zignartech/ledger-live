@@ -1,21 +1,27 @@
 {
-  "version": "0.2.0",
   "configurations": [
-    {
-      // Start LLD with:
-      //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
-      "name": "Attach Electron Renderer",
-      "type": "chrome",
-      "request": "attach",
-      "port": 8315
-    },
-    {
-      // Start LLD with:
-      //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
-      "name": "Attach Electron Main",
-      "type": "node",
-      "request": "attach",
-      "skipFiles": ["<node_internals>/**"]
-    }
+{
+  // Start live desktop with:
+  //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
+  "name": "Attach Electron Renderer",
+  "type": "chrome",
+  "request": "attach",
+  "port": 8315
+  },
+  {
+  // Start live desktop with:
+  //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
+  "name": "Attach Electron Main",
+  "type": "node",
+  
+  "request": "attach",
+  "skipFiles": ["<node_internals>/**"]
+  },
+  {
+      "command": "EXPERIMENTAL_CURRENCIES=shimmer pnpm run:cli send --recipient=smr1qrjmxymcxsmdvqslfw85tqkrgjdw97uycydpqvcka6t2ct0j29hpzn7zshk --amount=1 --currency=shimmer --index=0",
+      "name": "Run npm start",
+      "request": "launch",
+      "type": "node-terminal"
+  }
   ]
 }
