@@ -3221,8 +3221,8 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     family: "iota",
     units: [
       {
-        name: "SMR",
-        code: "SMR",
+        name: "RMS",
+        code: "RMS",
         magnitude: 6,
       },
       {

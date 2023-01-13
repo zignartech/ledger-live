@@ -137,6 +137,21 @@ const envDefinitions = {
     parser: stringParser,
     desc: "NEAR staking positions API",
   },
+  API_IOTA_NODE: {
+    parser: stringParser,
+    def: "https://chrysalis-nodes.iota.org",
+    desc: "IOTA API url",
+  },
+  API_SHIMMER_NODE: {
+    parser: stringParser,
+    def: "https://api.shimmer.network",
+    desc: "SHIMMER API url",
+  },
+  API_SHIMMER_TESTNET_NODE: {
+    parser: stringParser,
+    def: "https://api.testnet.shimmer.network",
+    desc: "SHIMMER TESTNET API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -682,14 +697,9 @@ const envDefinitions = {
     desc: "enable visibility of experimental apps and tools in Platform Catalog",
   },
   PLATFORM_MANIFEST_API_URL: {
-    def: "https://cdn.live.ledger.com/platform/apps/v1/data.json",
+    def: "https://live-app-catalog.ledger.com/api/v1/apps",
     parser: stringParser,
     desc: "url used to fetch platform app manifests",
-  },
-  PLATFORM_MANIFEST_STAGING_API_URL: {
-    def: "https://cdn.live.ledger-stg.com/platform/apps/v1/data.json",
-    parser: stringParser,
-    desc: "url used to fetch platform app manifests (staging)",
   },
   PLATFORM_LOCAL_MANIFEST_JSON: {
     def: "",
