@@ -114,7 +114,8 @@
       "metro-runtime": "^0.67.0",
       "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
-      "remove-flow-types-loader>loader-utils": "*"
+      "remove-flow-types-loader>loader-utils": "*",
+      "@iota/util.js": "2.0.0-rc.1"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",

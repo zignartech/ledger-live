@@ -107,6 +107,21 @@ const envDefinitions = {
     def: "https://filecoin.coin.ledger.com",
     desc: "Filecoin API url",
   },
+  API_IOTA_NODE: {
+    parser: stringParser,
+    def: "https://chrysalis-nodes.iota.org",
+    desc: "IOTA API url",
+  },
+  API_SHIMMER_NODE: {
+    parser: stringParser,
+    def: "https://api.shimmer.network",
+    desc: "SHIMMER API url",
+  },
+  API_SHIMMER_TESTNET_NODE: {
+    parser: stringParser,
+    def: "https://api.testnet.shimmer.network",
+    desc: "SHIMMER TESTNET API url",
+  },
   API_NEAR_ARCHIVE_NODE: {
     def: "https://near.coin.ledger.com/node/",
     parser: stringParser,

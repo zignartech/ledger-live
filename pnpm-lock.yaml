@@ -11,26 +11,27 @@ overrides:
   metro-transform-worker: ^0.67.0
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
+  '@iota/util.js': 2.0.0-rc.1
 
 patchedDependencies:
-  react-native-fast-crypto@2.2.0:
-    hash: jdmv3zyvsaug2f6l23zgrmwdli
-    path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
-    path: patches/react-native-video@5.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
-  react-native-os@1.2.6:
-    hash: 2e25ffb547hjiczrnsjhxl6geu
-    path: patches/react-native-os@1.2.6.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
+  react-native-video@5.2.0:
+    hash: lojvl6twgoj4rxeqeytmq4uduq
+    path: patches/react-native-video@5.2.0.patch
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
+  react-native-os@1.2.6:
+    hash: 2e25ffb547hjiczrnsjhxl6geu
+    path: patches/react-native-os@1.2.6.patch
+  react-native-fast-crypto@2.2.0:
+    hash: jdmv3zyvsaug2f6l23zgrmwdli
+    path: patches/react-native-fast-crypto@2.2.0.patch
 
 importers:
 
@@ -1021,6 +1022,10 @@ importers:
       '@ethereumjs/tx': ^3.5.0
       '@ethersproject/shims': ^5.7.0
       '@hashgraph/sdk': ^2.10.1
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/iota.js': 2.0.0-rc.1
+      '@iota/pow-wasm.js': 2.0.0-rc.2
+      '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': ^0.9.16
       '@keplr-wallet/proto-types': ^0.10.4
       '@ledgerhq/compressjs': github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
@@ -1173,6 +1178,7 @@ importers:
       sha.js: ^2.4.11
       source-map-support: ^0.5.21
       stellar-sdk: ^10.1.1
+      struct: ^0.0.12
       superstruct: 0.14.2
       timemachine: ^0.3.2
       tiny-secp256k1: ^1.1.6
@@ -1206,6 +1212,10 @@ importers:
       '@ethereumjs/tx': 3.5.1
       '@ethersproject/shims': 5.7.0
       '@hashgraph/sdk': 2.14.2
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/iota.js': 2.0.0-rc.1
+      '@iota/pow-wasm.js': 2.0.0-rc.2
+      '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': 0.9.16
       '@keplr-wallet/proto-types': 0.10.4
       '@ledgerhq/compressjs': github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
@@ -1313,6 +1323,7 @@ importers:
       sha.js: 2.4.11
       source-map-support: 0.5.21
       stellar-sdk: 10.1.2
+      struct: 0.0.12
       superstruct: 0.14.2
       tiny-secp256k1: 1.1.6
       triple-beam: 1.3.0
@@ -11197,6 +11208,45 @@ packages:
     engines: {node: '>=6.9.0'}
     dev: true
 
+  /@iota/crypto.js/2.0.0-rc.1:
+    resolution: {integrity: sha512-gidDFvbIcthVIaxqntffUCFHHNZNhu1e3zjwt6yaYLeuqJcc2AXPv/UF8Lz9Mfkw9aSM8xVUwo8/uYDkvs2eOQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@iota/util.js': 2.0.0-rc.1
+      big-integer: 1.6.51
+    dev: false
+
+  /@iota/iota.js/2.0.0-rc.1:
+    resolution: {integrity: sha512-GLMDsOVWvkYagdDz/rAdw58M7CJDW4bSZoFiLQHc790h3Au3Z4pn5FnBq7O258HHgSLpIfNx8RjcNRBwqDxV6Q==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/util.js': 2.0.0-rc.1
+      big-integer: 1.6.51
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@iota/pow-wasm.js/2.0.0-rc.2:
+    resolution: {integrity: sha512-UIu/IG54922wukZiIVDEO1LZpov2yNkZL94HW6St0ZH1SCiVqImXrAVQVSYQpIzDGHCPr97x8S7ZMXrGqvoqgg==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/types': 2.0.0-rc.2
+    dev: false
+
+  /@iota/types/2.0.0-rc.2:
+    resolution: {integrity: sha512-huL+171zMQgGYV4/zhHLFcE8heTLRJhtlqLEJaM1Q+klb2KxNqFX0EySU8pxZ/nslh0Dem3QQ+Jmwv1FdBmpFQ==}
+    dev: false
+
+  /@iota/util.js/2.0.0-rc.1:
+    resolution: {integrity: sha512-tG+qsCHhztGuthUPqLlckih3Ump+IcKCDEl+Sb7ACOOR7JM73KOGaRud8NlLu4GNqQyQh7s9Gn2GRkXBJ1apiA==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      big-integer: 1.6.51
+    dev: false
+
   /@iov/crypto/2.1.0:
     resolution: {integrity: sha512-jnb4XuK50admolm7fBxOcxfAW2TO+wYrZlhDWiMETItY/Y5gNNa1zaDSO2wNIjjfGng+8nQ1yqnNhqy7busV2Q==}
     dependencies:
@@ -13151,10 +13201,11 @@ packages:
       webpack-dev-server: 4.9.3_webpack@5.72.1
     dev: false
 
-  /@polkadot/keyring/10.1.13_rctvuuxcfab7pevo7bnynlzygy:
+  /@polkadot/keyring/10.1.13:
     resolution: {integrity: sha512-O5/sM1cfn/ueT7C6sxqZI9Z18RLOpPovdfZzBlcRAyfs/8uR+UA20r2lGCQdQIzlOeF0XPebIO0lwW+6wPtvtg==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
+    dependencies:
+      '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.13
       '@polkadot/util-crypto': 10.1.13_@polkadot+util@10.1.13
     dev: false
@@ -13195,7 +13246,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/keyring': 10.1.13_rctvuuxcfab7pevo7bnynlzygy
+      '@polkadot/keyring': 10.1.13
       '@polkadot/ui-settings': 2.9.13
       '@polkadot/ui-shared': 2.9.13_rctvuuxcfab7pevo7bnynlzygy
       '@polkadot/util': 10.1.12
@@ -13270,7 +13321,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.1
-      '@polkadot/keyring': 10.1.13_rctvuuxcfab7pevo7bnynlzygy
+      '@polkadot/keyring': 10.1.13
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
@@ -13431,6 +13482,18 @@ packages:
       '@polkadot/x-randomvalues': 10.1.12
     dev: false
 
+  /@polkadot/wasm-bridge/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-1TYkHsb9AEFhU9uZj3biEnN2yKQNzdrwSjiTvfCYnt97pnEkKsZI6cku+YPZQv5w/x9CQa5Yua9e2DVVZSivGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+    dev: false
+
   /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.12:
     resolution: {integrity: sha512-zbombRfA5v/mUWQQhgg2YwaxhRmxRIrvskw65x+lruax3b6xPBFDs7yplopiJU3r8h2pTgQvX/DUksvqz2TCRQ==}
     engines: {node: '>=14.0.0'}
@@ -13489,6 +13552,21 @@ packages:
       '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/x-randomvalues': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto-init/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-9yaUBcu+snwjJLmPPGl3cyGRQ1afyFGm16qzTM0sgG/ZCfUlK4uk8KWZe+sBUKgoxb2oXY7Y4WklKgQI1YBdfw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
     dev: false
 
   /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.12:
@@ -13556,6 +13634,23 @@ packages:
       '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.12
       '@polkadot/x-randomvalues': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-OO8h0qeVkqp4xYZaRVl4iuWOEtq282pNBHDKb6SOJuI2g59eWGcKh4EQU9Me2VP6qzojIqptrkrVt7KQXC68gA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-init': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
     dev: false
 
   /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.12:
@@ -50485,6 +50580,11 @@ packages:
     dependencies:
       escape-string-regexp: 1.0.5
     dev: true
+
+  /struct/0.0.12:
+    resolution: {integrity: sha512-PV2nfc79Od13idbDWQZcsBZlmeDTdPP67cOYTUWZfYE77MWGhEGgGIAFtpO1UdOvDzB3I//jbFaA09JXNRAO3A==}
+    engines: {node: '>0.6.0'}
+    dev: false
 
   /structured-headers/0.4.1:
     resolution: {integrity: sha512-0MP/Cxx5SzeeZ10p/bZI0S6MpgD+yxAhi1BOQ34jgnMXsCq3j1t6tQnZu+KdlL7dvJTLT3g9xN8tl10TqgFMcg==}
