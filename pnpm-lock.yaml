@@ -11,27 +11,27 @@ overrides:
   metro-transform-worker: ^0.67.0
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
-  '@iota/util.js': '*1.9.0-stardust.5'
+  '@iota/util.js': 2.0.0-rc.1
 
 patchedDependencies:
-  react-native-fast-crypto@2.2.0:
-    hash: jdmv3zyvsaug2f6l23zgrmwdli
-    path: patches/react-native-fast-crypto@2.2.0.patch
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
-  react-native-image-crop-tools@1.6.2:
-    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
-    path: patches/react-native-image-crop-tools@1.6.2.patch
-  rn-fetch-blob@0.12.0:
-    hash: n5yzdsrxz654upecs5xliebtmm
-    path: patches/rn-fetch-blob@0.12.0.patch
   react-native-os@1.2.6:
     hash: 2e25ffb547hjiczrnsjhxl6geu
     path: patches/react-native-os@1.2.6.patch
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
+  rn-fetch-blob@0.12.0:
+    hash: n5yzdsrxz654upecs5xliebtmm
+    path: patches/rn-fetch-blob@0.12.0.patch
+  react-native-image-crop-tools@1.6.2:
+    hash: ykxjy5s7xujdxmsgrwxo5mh3y4
+    path: patches/react-native-image-crop-tools@1.6.2.patch
+  react-native-fast-crypto@2.2.0:
+    hash: jdmv3zyvsaug2f6l23zgrmwdli
+    path: patches/react-native-fast-crypto@2.2.0.patch
 
 importers:
 
@@ -1022,10 +1022,10 @@ importers:
       '@ethereumjs/tx': ^3.5.0
       '@ethersproject/shims': ^5.7.0
       '@hashgraph/sdk': ^2.10.1
-      '@iota/crypto.js': ^1.8.6
-      '@iota/iota.js': 1.9.0-stardust.28
-      '@iota/pow-node.js': 2.0.0-rc.1
-      '@iota/util.js': '*1.9.0-stardust.5'
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/iota.js': 2.0.0-rc.1
+      '@iota/pow-wasm.js': 2.0.0-rc.2
+      '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': ^0.9.16
       '@keplr-wallet/proto-types': ^0.10.4
       '@ledgerhq/compressjs': github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
@@ -1212,10 +1212,10 @@ importers:
       '@ethereumjs/tx': 3.5.1
       '@ethersproject/shims': 5.7.0
       '@hashgraph/sdk': 2.14.2
-      '@iota/crypto.js': 1.8.6
-      '@iota/iota.js': 1.9.0-stardust.28
-      '@iota/pow-node.js': 2.0.0-rc.1
-      '@iota/util.js': 1.9.0-stardust.5
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/iota.js': 2.0.0-rc.1
+      '@iota/pow-wasm.js': 2.0.0-rc.2
+      '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': 0.9.16
       '@keplr-wallet/proto-types': 0.10.4
       '@ledgerhq/compressjs': github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
@@ -11231,48 +11231,40 @@ packages:
     engines: {node: '>=6.9.0'}
     dev: true
 
-  /@iota/crypto.js/1.8.6:
-    resolution: {integrity: sha512-bmsBL+gEJVlT1KgkOqjIkPsyNs5VV9MyrAWo9UAYdGNxfyH+KeYiiRzIaQwwhCzUkncuNzlCTbEo2qRJQoKETg==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@iota/util.js': 1.9.0-stardust.5
-      big-integer: 1.6.51
-    dev: false
-
   /@iota/crypto.js/2.0.0-rc.1:
     resolution: {integrity: sha512-gidDFvbIcthVIaxqntffUCFHHNZNhu1e3zjwt6yaYLeuqJcc2AXPv/UF8Lz9Mfkw9aSM8xVUwo8/uYDkvs2eOQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@iota/util.js': 1.9.0-stardust.5
+      '@iota/util.js': 2.0.0-rc.1
       big-integer: 1.6.51
     dev: false
 
-  /@iota/iota.js/1.9.0-stardust.28:
-    resolution: {integrity: sha512-SWI6OGH7aq7Kl7WG8y8DyFOfGI/sKHE6Z3O83cyNFZNh9EOYgBL39KQO1RNJK7jg4OVhcHv6h/GxAhVRhpWkyA==}
+  /@iota/iota.js/2.0.0-rc.1:
+    resolution: {integrity: sha512-GLMDsOVWvkYagdDz/rAdw58M7CJDW4bSZoFiLQHc790h3Au3Z4pn5FnBq7O258HHgSLpIfNx8RjcNRBwqDxV6Q==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@iota/crypto.js': 2.0.0-rc.1
-      '@iota/util.js': 1.9.0-stardust.5
+      '@iota/util.js': 2.0.0-rc.1
       big-integer: 1.6.51
       node-fetch: 2.6.7
     transitivePeerDependencies:
       - encoding
     dev: false
 
-  /@iota/pow-node.js/2.0.0-rc.1:
-    resolution: {integrity: sha512-mcyx0u++XE+ga/KdJM7xfhx0wprlZu7hp0qdO7IBa/wdiAA4xNPF3kzbfBsWlTpIVnDhMwz2Iew8Wutqk+MjYg==}
+  /@iota/pow-wasm.js/2.0.0-rc.2:
+    resolution: {integrity: sha512-UIu/IG54922wukZiIVDEO1LZpov2yNkZL94HW6St0ZH1SCiVqImXrAVQVSYQpIzDGHCPr97x8S7ZMXrGqvoqgg==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@iota/crypto.js': 2.0.0-rc.1
-      '@iota/types': 2.0.0-rc.1
+      '@iota/types': 2.0.0-rc.2
     dev: false
 
-  /@iota/types/2.0.0-rc.1:
-    resolution: {integrity: sha512-IDov83MBDlRJJXj98sPhBVslgCSqFexsvelDTDeWKZwYG8G7I+BnMCjdVXiOzLrWy3ScWJljqx1yW4cqmTdpRg==}
+  /@iota/types/2.0.0-rc.2:
+    resolution: {integrity: sha512-huL+171zMQgGYV4/zhHLFcE8heTLRJhtlqLEJaM1Q+klb2KxNqFX0EySU8pxZ/nslh0Dem3QQ+Jmwv1FdBmpFQ==}
     dev: false
 
-  /@iota/util.js/1.9.0-stardust.5:
-    resolution: {integrity: sha512-BGXzzjUQQYaV/H0bXJYKW+Zgd9PIN+HLPH8BcYhubI65X4G2ID23/osmpK/za+Ds6t/MkpdPKIiBwZPGXuCUBw==}
+  /@iota/util.js/2.0.0-rc.1:
+    resolution: {integrity: sha512-tG+qsCHhztGuthUPqLlckih3Ump+IcKCDEl+Sb7ACOOR7JM73KOGaRud8NlLu4GNqQyQh7s9Gn2GRkXBJ1apiA==}
     engines: {node: '>=14.0.0'}
     dependencies:
       big-integer: 1.6.51
@@ -13237,6 +13229,8 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/util-crypto': 10.1.13_@polkadot+util@10.1.13
     dev: false
 
   /@polkadot/networks/10.1.12:
@@ -13403,22 +13397,42 @@ packages:
       tweetnacl: 1.0.3
     dev: false
 
-  /@polkadot/util-crypto/10.1.13_@polkadot+util@10.1.14:
+  /@polkadot/util-crypto/10.1.13_@polkadot+util@10.1.13:
     resolution: {integrity: sha512-LYHsJM8hzsvehO2T1S5vMFX7k2gCt/QnG3NzSGo+97OauitrICN8V7py4o5TOewUzMeihNMVKjRkj/cC4e+i4Q==}
     engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': 10.1.13
     dependencies:
       '@babel/runtime': 7.20.1
       '@noble/hashes': 1.1.3
       '@noble/secp256k1': 1.7.0
       '@polkadot/networks': 10.1.13
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-crypto': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/x-bigint': 10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
+    dev: false
+
+  /@polkadot/util-crypto/10.1.13_@polkadot+util@10.1.14:
+    resolution: {integrity: sha512-LYHsJM8hzsvehO2T1S5vMFX7k2gCt/QnG3NzSGo+97OauitrICN8V7py4o5TOewUzMeihNMVKjRkj/cC4e+i4Q==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': 10.1.13
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@noble/hashes': 1.1.3
+      '@noble/secp256k1': 1.7.0
+      '@polkadot/networks': 10.1.13
+      '@polkadot/util': 10.1.14
       '@polkadot/wasm-crypto': 6.3.1_kb3jzvlsspnvwstil6sh4lm6wa
       '@polkadot/x-bigint': 10.1.13
       '@polkadot/x-randomvalues': 10.1.13
       '@scure/base': 1.1.1
       ed2curve: 0.3.0
       tweetnacl: 1.0.3
-    transitivePeerDependencies:
-      - '@polkadot/util'
     dev: false
 
   /@polkadot/util/10.1.12:
@@ -13484,6 +13498,18 @@ packages:
       '@polkadot/x-randomvalues': 10.1.12
     dev: false
 
+  /@polkadot/wasm-bridge/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-1TYkHsb9AEFhU9uZj3biEnN2yKQNzdrwSjiTvfCYnt97pnEkKsZI6cku+YPZQv5w/x9CQa5Yua9e2DVVZSivGA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+    dev: false
+
   /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.12:
     resolution: {integrity: sha512-zbombRfA5v/mUWQQhgg2YwaxhRmxRIrvskw65x+lruax3b6xPBFDs7yplopiJU3r8h2pTgQvX/DUksvqz2TCRQ==}
     engines: {node: '>=14.0.0'}
@@ -13492,6 +13518,16 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.13:
+    resolution: {integrity: sha512-zbombRfA5v/mUWQQhgg2YwaxhRmxRIrvskw65x+lruax3b6xPBFDs7yplopiJU3r8h2pTgQvX/DUksvqz2TCRQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
     dev: false
 
   /@polkadot/wasm-crypto-asmjs/6.3.1_@polkadot+util@10.1.14:
@@ -13534,6 +13570,21 @@ packages:
       '@polkadot/x-randomvalues': 10.1.12
     dev: false
 
+  /@polkadot/wasm-crypto-init/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-9yaUBcu+snwjJLmPPGl3cyGRQ1afyFGm16qzTM0sgG/ZCfUlK4uk8KWZe+sBUKgoxb2oXY7Y4WklKgQI1YBdfw==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+    dev: false
+
   /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.12:
     resolution: {integrity: sha512-idSlzKGVzCfeCMRHsacRvqwojSaTadFxL/Dbls4z1thvfa3U9Ku0d2qVtlwg7Hj+tYWDiuP8Kygs+6bQwfs0XA==}
     engines: {node: '>=14.0.0'}
@@ -13543,6 +13594,17 @@ packages:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.12
       '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.12
+    dev: false
+
+  /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.13:
+    resolution: {integrity: sha512-idSlzKGVzCfeCMRHsacRvqwojSaTadFxL/Dbls4z1thvfa3U9Ku0d2qVtlwg7Hj+tYWDiuP8Kygs+6bQwfs0XA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.13
     dev: false
 
   /@polkadot/wasm-crypto-wasm/6.3.1_@polkadot+util@10.1.14:
@@ -13590,6 +13652,23 @@ packages:
       '@polkadot/x-randomvalues': 10.1.12
     dev: false
 
+  /@polkadot/wasm-crypto/6.3.1_nz7hxxoej7rhwtqhu42recmbci:
+    resolution: {integrity: sha512-OO8h0qeVkqp4xYZaRVl4iuWOEtq282pNBHDKb6SOJuI2g59eWGcKh4EQU9Me2VP6qzojIqptrkrVt7KQXC68gA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+      '@polkadot/x-randomvalues': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
+      '@polkadot/wasm-bridge': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-asmjs': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-crypto-init': 6.3.1_nz7hxxoej7rhwtqhu42recmbci
+      '@polkadot/wasm-crypto-wasm': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/wasm-util': 6.3.1_@polkadot+util@10.1.13
+      '@polkadot/x-randomvalues': 10.1.13
+    dev: false
+
   /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.12:
     resolution: {integrity: sha512-12oAv5J7Yoc9m6jixrSaQCxpOkWOyzHx3DMC8qmLjRiwdBWxqLmImOVRVnFsbaxqSbhBIHRuJphVxWE+GZETDg==}
     engines: {node: '>=14.0.0'}
@@ -13598,6 +13677,16 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.1
       '@polkadot/util': 10.1.12
+    dev: false
+
+  /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.13:
+    resolution: {integrity: sha512-12oAv5J7Yoc9m6jixrSaQCxpOkWOyzHx3DMC8qmLjRiwdBWxqLmImOVRVnFsbaxqSbhBIHRuJphVxWE+GZETDg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': '*'
+    dependencies:
+      '@babel/runtime': 7.20.1
+      '@polkadot/util': 10.1.13
     dev: false
 
   /@polkadot/wasm-util/6.3.1_@polkadot+util@10.1.14:
@@ -28913,7 +29002,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0_ffi3uiz42rv3jyhs6cr7p7qqry
+      eslint-plugin-import: 2.26.0_ymzqyjxdu7ir24gg3vejmyl6la
       object.assign: 4.1.3
       object.entries: 1.1.5
     dev: true
@@ -36578,7 +36667,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0_33lso24kgdvwdhve7eirdtgycu
+      ts-node: 10.7.0_apjxfgsonp5vzn5ucv2l752xgq
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -38435,6 +38524,7 @@ packages:
       write-file-atomic: 2.4.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /jsdom/11.12.0:
     resolution: {integrity: sha512-y8Px43oyiBM13Zc1z780FrfNLJCXTL40EWlty/LXUtcjykRBNgLlCjWXpfSPBl2iv+N7koQN+dvqszHZgT/Fjw==}
@@ -40555,24 +40645,6 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro-config/0.67.0_5rj3ktdhebdtkdjqejo5rbxriu:
-    resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
-    peerDependencies:
-      metro-transform-worker: '*'
-    peerDependenciesMeta:
-      metro-transform-worker:
-        optional: true
-    dependencies:
-      cosmiconfig: 5.2.1
-      jest-validate: 26.6.2
-      metro: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-core: 0.67.0_metro@0.67.0
-      metro-runtime: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-    transitivePeerDependencies:
-      - metro
-
   /metro-config/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
     resolution: {integrity: sha512-ThAwUmzZwTbKyyrIn2bKIcJDPDBS0LKAbqJZQioflvBGfcgA21h3fdL3IxRmvCEl6OnkEWI0Tn1Z9w2GLAjf2g==}
     peerDependencies:
@@ -40934,7 +41006,7 @@ packages:
       '@babel/parser': 7.18.11
       '@babel/types': 7.18.10
       babel-preset-fbjs: 3.4.0_@babel+core@7.18.10
-      metro: 0.67.0_h77kaxayu5kga6qsud7rauzt6a
+      metro: 0.67.0
       metro-babel-transformer: 0.67.0
       metro-cache: 0.67.0_metro@0.67.0
       metro-cache-key: 0.67.0
@@ -41007,68 +41079,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - encoding
-      - supports-color
-      - utf-8-validate
-
-  /metro/0.67.0_h77kaxayu5kga6qsud7rauzt6a:
-    resolution: {integrity: sha512-DwuBGAFcAivoac/swz8Lp7Y5Bcge1tzT7T6K0nf1ubqJP8YzBUtyR4pkjEYVUzVu/NZf7O54kHSPVu1ibYzOBQ==}
-    hasBin: true
-    dependencies:
-      '@babel/code-frame': 7.18.6
-      '@babel/core': 7.18.10
-      '@babel/generator': 7.18.12
-      '@babel/parser': 7.18.11
-      '@babel/template': 7.18.10
-      '@babel/traverse': 7.18.11
-      '@babel/types': 7.18.10
-      absolute-path: 0.0.0
-      accepts: 1.3.8
-      async: 2.6.4
-      chalk: 4.1.2
-      ci-info: 2.0.0
-      connect: 3.7.0
-      debug: 2.6.9
-      denodeify: 1.2.1
-      error-stack-parser: 2.0.7
-      fs-extra: 1.0.0
-      graceful-fs: 4.2.10
-      hermes-parser: 0.5.0
-      image-size: 0.6.3
-      invariant: 2.2.4
-      jest-haste-map: 27.5.1_metro@0.67.0
-      jest-worker: 26.6.2_metro@0.67.0
-      lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.67.0
-      metro-cache: 0.67.0_metro@0.67.0
-      metro-cache-key: 0.67.0
-      metro-config: 0.67.0_5rj3ktdhebdtkdjqejo5rbxriu
-      metro-core: 0.67.0_metro@0.67.0
-      metro-hermes-compiler: 0.67.0
-      metro-inspector-proxy: 0.67.0
-      metro-minify-uglify: 0.67.0
-      metro-react-native-babel-preset: 0.67.0_@babel+core@7.18.10
-      metro-resolver: 0.67.0
-      metro-runtime: 0.67.0
-      metro-source-map: 0.67.0
-      metro-symbolicate: 0.67.0
-      metro-transform-plugins: 0.67.0
-      metro-transform-worker: 0.67.0_metro-minify-uglify@0.67.0
-      mime-types: 2.1.35
-      mkdirp: 0.5.6
-      node-fetch: 2.6.7
-      nullthrows: 1.1.1
-      rimraf: 2.7.1
-      serialize-error: 2.1.0
-      source-map: 0.5.7
-      strip-ansi: 6.0.1
-      temp: 0.8.3
-      throat: 5.0.0
-      ws: 7.5.7
-      yargs: 15.4.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - metro-transform-worker
       - supports-color
       - utf-8-validate
 
@@ -46502,6 +46512,7 @@ packages:
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
+    dev: true
 
   /react-native-codegen/0.0.7:
     resolution: {integrity: sha512-dwNgR8zJ3ALr480QnAmpTiqvFo+rDtq6V5oCggKhYFlRjzOmVSFn3YD41u8ltvKS5G2nQ8gCs2vReFFnRGLYng==}
@@ -46746,7 +46757,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       react-native-animatable: 1.3.3
     dev: false
 
@@ -46822,7 +46833,7 @@ packages:
       invariant: 2.2.4
       lodash.isequal: 4.5.0
       react: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
       setimmediate: 1.0.5
       string-hash-64: 1.0.3
     transitivePeerDependencies:
@@ -46935,7 +46946,7 @@ packages:
       css-select: 4.3.0
       css-tree: 1.1.3
       react: 17.0.2
-      react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
+      react-native: 0.68.5_qiqqwmyv63yhnuboofexv3s7x4
     dev: false
 
   /react-native-svg/12.4.4_ondxtwf5lqq5g76dzmsmwamaca:
@@ -47166,6 +47177,7 @@ packages:
       - metro-transform-worker
       - supports-color
       - utf-8-validate
+    dev: true
 
   /react-native/0.68.5_qiqqwmyv63yhnuboofexv3s7x4:
     resolution: {integrity: sha512-t3kiQ/gumFV+0r/NRSIGtYxanjY4da0utFqHgkMcRPJVwXFWC0Fr8YiOeRGYO1dp8EfrSsOjtfWic/inqVYlbQ==}
