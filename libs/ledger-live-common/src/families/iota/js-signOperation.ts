@@ -187,6 +187,7 @@ export async function buildTransactionPayload(
   }
 
   if (totalFunds.isGreaterThan(amountToSend) && !match) {
+    let consumedBalance: BigNumber = new BigNumber(0);
     for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
       // Fetch the outputs itself with remainder
       const output = await client.output(genesisAddressOutputs.items[i]);
@@ -194,13 +195,22 @@ export async function buildTransactionPayload(
         !output.metadata.isSpent &&
         output.output.type === BASIC_OUTPUT_TYPE
       ) {
+        consumedBalance = consumedBalance.plus(
+          (output.output as IBasicOutput).amount
+        );
         inputs.push(
           TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
         );
         consumingOutputs.push(output.output);
+        if (consumedBalance.isEqualTo(amountToSend)) {
+          break;
+        }
+        if (consumedBalance.isGreaterThan(amountToSend)) {
+          hasRemainder = true;
+          break;
+        }
       }
     }
-    hasRemainder = true;
   }
 
   // Start with finding the outputs. They need to have
