@@ -2359,8 +2359,8 @@ export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.shimmer.network/mainnet/addr/$address",
-        tx: "https://explorer.shimmer.network/mainnet/message/$hash",
+        address: "https://explorer.shimmer.network/shimmer/addr/$address",
+        tx: "https://explorer.shimmer.network/shimmer/transaction/$hash",
       },
     ],
   },
