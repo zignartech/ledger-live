@@ -275,8 +275,13 @@ export async function buildTransactionPayload(
   serializeTransactionEssence(wsTsxEssence, transactionEssence);
   const path = account.freshAddresses[0].derivationPath; // for stardust, only the first address is used (change = 0)
   const pathArray = Iota._validatePath(path);
-  wsTsxEssence.writeUInt32("bip32_index", pathArray[3]);
-  wsTsxEssence.writeUInt32("bip32_change", pathArray[4]);
+
+  // we have to add the key indices for each input after the essence
+  for (let i = 0; i < inputs.length; i++) {
+    wsTsxEssence.writeUInt32("bip32_index", pathArray[3]);
+    wsTsxEssence.writeUInt32("bip32_change", pathArray[4]);
+  }
+
   const essenceFinal = Buffer.from(wsTsxEssence.finalBytes());
 
   // write essence to the Ledger device data buffer and let the user confirm it.
