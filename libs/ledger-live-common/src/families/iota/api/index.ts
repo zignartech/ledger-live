@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
 import network from "../../../network";
@@ -180,28 +181,28 @@ const txToOp = async (
 
   // receivers logic
   for (let o = 0; o < outputs.length; o++) {
-    if (outputCheck(outputs[o])) {
-      const recipientUnlockCondition: any = outputs[o].unlockConditions[0];
-      const recipientPubKeyHash: any =
-        recipientUnlockCondition.address.pubKeyHash;
-      const recipientUint8Array = Uint8Array.from(
-        recipientPubKeyHash
-          .match(/.{1,2}/g) // magic
-          .map((byte: string) => parseInt(byte, 16))
-      );
-      // the address of the recipient
-      const recipient = uint8ArrayToAddress(currencyId, recipientUint8Array);
+    // isClaiming = outputCheck(outputs[o]);
+    const recipientUnlockCondition: any = outputs[o].unlockConditions[0];
+    const recipientPubKeyHash: any =
+      recipientUnlockCondition.address.pubKeyHash;
+    const recipientUint8Array = Uint8Array.from(
+      recipientPubKeyHash
+        .match(/.{1,2}/g) // magic
+        .map((byte: string) => parseInt(byte, 16))
+    );
+    // the address of the recipient
+    const recipient = uint8ArrayToAddress(currencyId, recipientUint8Array);
 
-      // In case the transaction is incoming:
-      // add to the value all amount coming into the address.
-      // If the transaction is outgoing:
-      // add to the value all amount going to other addresses.
-      const amount: number = +outputs[o].amount;
-      if (type == "IN" && recipient == address) value += amount;
-      else if (type == "OUT" && recipient != address) value += amount; // otherwise, it means that it's a remainder and doesn't count into the value
+    // In case the transaction is incoming:
+    // add to the value all amount coming into the address.
+    // If the transaction is outgoing:
+    // add to the value all amount going to other addresses.
+    const amount: number = +outputs[o].amount;
+    if (type == "IN" && recipient == address) value += amount;
+    else if (type == "OUT" && recipient != address) value += amount; // otherwise, it means that it's a remainder and doesn't count into the value
 
-      recipients.push(recipient);
-    }
+    recipients.push(recipient);
+    // }
   }
 
   const op: Operation = {
@@ -219,19 +220,43 @@ const txToOp = async (
     extra: {},
   };
 
+  const outputWithUnlockCondition = (
+    payload.essence.outputs as OutputWithUnlockConditions[]
+  ).find((output) => {
+    const hasUnlockConditionWithType3 =
+      output.unlockConditions &&
+      output.unlockConditions.some((uc) => uc.type === 3 && uc.returnAddress);
+    return hasUnlockConditionWithType3;
+  });
+
+  op.extra.unixTime = outputWithUnlockCondition?.unlockConditions[0].unixTime;
+
   return op;
 };
 
+interface OutputWithUnlockConditions {
+  type: number;
+  amount: string;
+  unlockConditions: {
+    type: number;
+    returnAddress?: {
+      type: number;
+      pubKeyHash: string;
+    };
+    unixTime?: number;
+  }[];
+}
+
 // Only outputs that have one o
-const outputCheck = (output: any): boolean => {
-  if (
-    output.type == 3 && // it's a BasicOutput
-    output.unlockConditions.length == 1 && // no other unlockConditions
-    output.unlockConditions[0].type == 0 // it's an AddressUnlockCondition
-  ) {
-    return true;
-  } else return false;
-};
+// const outputCheck = (output: any): boolean => {
+//   if (
+//     output.type == 3 && // it's a BasicOutput
+//     output.unlockConditions.length == 1 && // no other unlockConditions
+//     output.unlockConditions[0].type == 0 // it's an AddressUnlockCondition
+//   ) {
+//     return true;
+//   } else return false;
+// };
 
 export async function fetchAndWaitForBasicOutputs(
   addressBech32: string,
