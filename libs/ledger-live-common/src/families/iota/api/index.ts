@@ -228,9 +228,12 @@ const txToOp = async (
       output.unlockConditions.some((uc) => uc.type === 3 && uc.returnAddress);
     return hasUnlockConditionWithType3;
   });
-
-  op.extra.unixTime = outputWithUnlockCondition?.unlockConditions[0].unixTime;
-
+  const umlockClaim = outputWithUnlockCondition?.unlockConditions.find(
+    (unlock) => {
+      if (unlock.type === 3 && unlock.returnAddress) return unlock;
+    }
+  );
+  op.extra.unixTime = umlockClaim?.unixTime;
   return op;
 };
 
