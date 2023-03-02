@@ -4,11 +4,12 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
 import { encodeAccountId } from "../../account";
 
-import { getAccount, getOperations } from "./api";
+import { getAccountBalance, getOperations } from "./api";
 
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async (
+  info
+): Promise<Partial<Account>> => {
   const { address, currency, initialAccount, derivationMode } = info;
-  const oldOperations = initialAccount?.operations || [];
 
   const accountId = encodeAccountId({
     type: "js",
@@ -18,24 +19,26 @@ const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
-  // get the current account balance state depending your api implementation
-  const { blockHeight, balance, spendableBalance } = await getAccount(
-    currency.id,
-    address
-  );
+  // get current account balance
+  const accountBalance = await getAccountBalance(currency.id, address);
+
+  // grab latest operation's consensus timestamp for incremental sync
+  const oldOperations = initialAccount?.operations || [];
+
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, currency.id, address);
+
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape = {
-    balance,
-    spendableBalance,
-    operationsCount: operations.length,
-    blockHeight,
+  return {
     id: accountId,
+    freshAddress: address,
+    balance: accountBalance.balance,
+    spendableBalance: accountBalance.balance,
+    operationsCount: operations.length,
+    operations,
+    blockHeight: 10,
   };
-
-  return { ...shape, operations };
 };
 
 const postSync = (initial: Account, parent: Account) => parent;

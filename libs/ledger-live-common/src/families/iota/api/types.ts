@@ -373,6 +373,8 @@ export interface NFTAddress {
 export interface AddressUnlockCondition {
   /** Set to value 0 to denote an Address Unlock Condition. */
   type: number;
+  returnAddress: string;
+  unixTime: number;
   address: Ed25519Address | AliasAddress | NFTAddress;
 }
 

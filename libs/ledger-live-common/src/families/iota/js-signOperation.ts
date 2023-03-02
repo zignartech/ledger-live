@@ -20,7 +20,6 @@ import {
   SingleNodeClient,
   DEFAULT_PROTOCOL_VERSION,
   IBlock,
-  IOutputsResponse,
   TransactionHelper,
   IUTXOInput,
   OutputTypes,
@@ -45,7 +44,7 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { getUrl } from "./api";
+import { fetchAndWaitForBasicOutputs, getUrl } from "./api";
 import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
@@ -122,7 +121,8 @@ export async function buildTransactionPayload(
   // Indexer returns outputIds of matching outputs.
   const genesisAddressOutputs = await fetchAndWaitForBasicOutputs(
     genesisWalletAddressBech32,
-    indexerPlugin
+    indexerPlugin,
+    false
   );
 
   let totalFunds: BigNumber = new BigNumber(0);
@@ -341,41 +341,6 @@ export async function buildTransactionPayload(
   };
 
   return transactionPayload;
-}
-
-async function fetchAndWaitForBasicOutputs(
-  addressBech32: string,
-  indexerPlugin: IndexerPluginClient
-): Promise<IOutputsResponse> {
-  let outputsResponse: IOutputsResponse = {
-    ledgerIndex: 0,
-    cursor: "",
-    pageSize: "",
-    items: [],
-  };
-  const maxTries = 10;
-  let tries = 0;
-  while (outputsResponse.items.length == 0) {
-    if (tries > maxTries) {
-      break;
-    }
-    tries++;
-    outputsResponse = await indexerPlugin.basicOutputs({
-      addressBech32: addressBech32,
-      hasStorageDepositReturn: false,
-      hasExpiration: false,
-      hasTimelock: false,
-      hasNativeTokens: false,
-    });
-    if (outputsResponse.items.length == 0) {
-      await new Promise((f) => setTimeout(f, 1000));
-    }
-  }
-  if (tries > maxTries) {
-    throw new Error("Didn't find any outputs for address");
-  }
-
-  return outputsResponse;
 }
 
 /**
