@@ -23,6 +23,7 @@ import AmountCell from "./AmountCell";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import Button from "../Button";
 
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (state, { account, parentAccount }) =>
@@ -36,7 +37,7 @@ const OperationRow: ThemedComponent<{}> = styled(Box).attrs(() => ({
   alignItems: "center",
 }))`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  height: 68px;
+  height: 80px;
   opacity: ${p => (p.isOptimistic ? 0.5 : 1)};
   cursor: pointer;
 
@@ -72,6 +73,16 @@ class OperationComponent extends PureComponent<Props> {
     onOperationClick(operation, account, parentAccount);
   };
 
+  onClaim = () => {
+    const { account, parentAccount, onOperationClick, operation } = this.props;
+    onOperationClick(operation, account, parentAccount);
+  };
+
+  onReject = () => {
+    const { account, parentAccount, onOperationClick, operation } = this.props;
+    onOperationClick(operation, account, parentAccount);
+  };
+
   render() {
     const {
       account,
@@ -88,7 +99,7 @@ class OperationComponent extends PureComponent<Props> {
     const unit = getAccountUnit(account);
     const mainAccount = getMainAccount(account, parentAccount);
     const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-
+    console.log("Operation", operation);
     return (
       <OperationRow
         className="operation-row"
@@ -105,6 +116,18 @@ class OperationComponent extends PureComponent<Props> {
         <DateCell text={text} operation={operation} t={t} />
         {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
         {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
+        <div style={{ width: "48px", paddingRight: "4px", paddingLeft: "4px" }}>
+          {operation.type === "IN" && (
+            <Box gap={"2px"} horizontal={true}>
+              <Button small primary onClick={this.onClaim}>
+                Claim
+              </Button>
+              <Button small inverted onClick={this.onReject}>
+                Reject
+              </Button>
+            </Box>
+          )}
+        </div>
         <AmountCell
           operation={operation}
           currency={currency}

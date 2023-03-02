@@ -90,6 +90,7 @@ const Box: ThemedComponent<{
   > * + * {
     margin-top: ${p => (!p.horizontal && p.flow ? `${p.theme.space[p.flow]}px` : "")};
     margin-left: ${p => (p.horizontal && p.flow ? `${p.theme.space[p.flow]}px` : "")};
+    margin-right: ${p => (p.horizontal && p.flow ? `${p.theme.space[p.flow]}px` : "")};
   }
 `;
 
