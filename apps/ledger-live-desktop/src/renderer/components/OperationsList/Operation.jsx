@@ -99,7 +99,6 @@ class OperationComponent extends PureComponent<Props> {
     const unit = getAccountUnit(account);
     const mainAccount = getMainAccount(account, parentAccount);
     const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-    console.log("Operation", operation);
     return (
       <OperationRow
         className="operation-row"
@@ -117,7 +116,7 @@ class OperationComponent extends PureComponent<Props> {
         {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
         {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
         <div style={{ width: "48px", paddingRight: "4px", paddingLeft: "4px" }}>
-          {operation.type === "IN" && (
+          {operation.extra.isClaiming && (
             <Box gap={"2px"} horizontal={true}>
               <Button small primary onClick={this.onClaim}>
                 Claim

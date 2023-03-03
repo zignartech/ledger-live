@@ -233,6 +233,7 @@ const txToOp = async (
       if (unlock.type === 3 && unlock.returnAddress) return unlock;
     }
   );
+  op.extra.isClaiming = !!umlockClaim;
   op.extra.unixTime = umlockClaim?.unixTime;
   return op;
 };
