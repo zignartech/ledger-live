@@ -40,6 +40,7 @@ export const getAccountBridge = (
   account: AccountLike,
   parentAccount?: Account | null
 ): AccountBridge<any> => {
+  console.log('IN ACCOUNT BRIDGE')
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const { family } = currency;

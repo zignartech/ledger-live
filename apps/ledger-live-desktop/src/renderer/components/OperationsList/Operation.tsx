@@ -25,6 +25,7 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import Button from "../Button";
 import { openModal } from "~/renderer/actions/modals";
+import { getAccountBridge } from "~/../../../libs/ledger-live-common/lib/bridge/impl";
 
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (
@@ -69,14 +70,25 @@ const OperationComponent = ({
   const unit = getAccountUnit(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-
+  const bridge = getAccountBridge(account, parentAccount);
   const onClaim = () => {
     console.log("in onClaim");
+    const claimedOperation = bridge.claimOperation && bridge.claimOperation(mainAccount);
+    console.log("claimedOperation", claimedOperation);
     dispatch(
       openModal("MODAL_SIGN_MESSAGE", {
         account,
         parentAccount,
         message: operation.extra.claimableHash,
+        onConfirmationHandler: () => {
+          console.log("in onConfirmationHandler");
+        },
+        onStepChange: () => {
+          console.log("in onStepChange");
+        },
+        onFailHandler: () => {
+          console.log("in onFailHandler");
+        }
       }),
     );
   };
@@ -155,3 +167,11 @@ const OperationRow = styled(Box).attrs(() => ({
 `;
 
 export default ConnectedOperationComponent;
+function signOperationClaimableHash(operation: Operation, account: AccountLike, parentAccount: Account | undefined) {
+  const bridge = getAccountBridge(account, parentAccount);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const transaction = bridge.createTransaction(mainAccount);
+  const signedTransaction = bridge.claimOperation(mainAccount, transaction, operation);
+  console.log("signedTransaction", signedTransaction);
+}
+

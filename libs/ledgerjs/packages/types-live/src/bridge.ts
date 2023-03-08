@@ -3,36 +3,36 @@
 // a WalletBridge is implemented on renderer side.
 // this is an abstraction on top of underlying blockchains api (libcore / ethereumjs / ripple js / ...)
 // that would directly be called from UI needs.
-import { BigNumber } from "bignumber.js";
-import type { Observable } from "rxjs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, Account, AccountRaw } from "./account";
+import { BigNumber } from 'bignumber.js';
+import { Observable } from 'rxjs';
+import type { CryptoCurrency } from '@ledgerhq/types-cryptoassets';
+import type { AccountLike, Account, AccountRaw } from './account';
 import type {
   SignOperationEvent,
   SignedOperation,
   TransactionCommon,
   TransactionStatusCommon,
-} from "./transaction";
-import type { Operation } from "./operation";
-import type { DerivationMode } from "./derivation";
-import type { SyncConfig } from "./pagination";
+} from './transaction';
+import type { Operation } from './operation';
+import type { DerivationMode } from './derivation';
+import type { SyncConfig } from './pagination';
 import {
   CryptoCurrencyIds,
   NFTCollectionMetadata,
   NFTCollectionMetadataResponse,
   NFTMetadata,
   NFTMetadataResponse,
-} from "./nft";
+} from './nft';
 
 export type ScanAccountEvent = {
-  type: "discovered";
+  type: 'discovered';
   account: Account;
 };
 /**
  * More events will come in the future
  */
 export type ScanAccountEventRaw = {
-  type: "discovered";
+  type: 'discovered';
   account: AccountRaw;
 };
 
@@ -65,12 +65,26 @@ export type SignOperationArg0<T> = {
   deviceId: DeviceId;
 };
 
+export type ClaimOperationArg0 = {
+  account: Account;
+  deviceId: DeviceId;
+}
+
 /**
  *
  */
 export type SignOperationFnSignature<T> = (
   arg0: SignOperationArg0<T>
 ) => Observable<SignOperationEvent>;
+
+/**
+ *
+ */
+export type ClaimOperationFnSignature = ( 
+  account: Account,
+  deviceId: DeviceId
+ ) => Observable<SignOperationEvent>;
+
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 
@@ -168,6 +182,8 @@ export interface AccountBridge<T extends TransactionCommon> {
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
+  // Claim Operation in IOTA
+  claimOperation?:  SignOperationFnSignature<T>
 }
 
 type ExpectFn = (...args: Array<any>) => any;

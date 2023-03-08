@@ -11,6 +11,7 @@ export default async function broadcast({
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> {
+  console.log('IN BROADCAST COMMON')
   const { signature, operation } = signedOperation;
   const block: IBlock = JSON.parse(signature);
   const API_ENDPOINT = getUrl(account.currency.id, "");

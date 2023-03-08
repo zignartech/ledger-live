@@ -9,6 +9,7 @@ import type {
 } from "../generated/types";
 import transactionModulePerFamily from "../generated/transaction";
 import type { Account } from "@ledgerhq/types-live";
+export * from "../families/iota/js-signOperationClaim";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const TM = transactionModulePerFamily[tr.family];
