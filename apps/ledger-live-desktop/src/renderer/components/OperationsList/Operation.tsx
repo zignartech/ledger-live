@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { ComponentType } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
@@ -24,27 +24,17 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import Button from "../Button";
+import { openModal } from "~/renderer/actions/modals";
 
 const mapStateToProps = createStructuredSelector({
-  confirmationsNb: (state, { account, parentAccount }) =>
+  confirmationsNb: (
+    state: any,
+    { account, parentAccount }: { account: AccountLike, parentAccount?: Account },
+  ) =>
     confirmationsNbForCurrencySelector(state, {
       currency: getMainAccount(account, parentAccount).currency,
     }),
 });
-
-const OperationRow: ThemedComponent<{}> = styled(Box).attrs(() => ({
-  horizontal: true,
-  alignItems: "center",
-}))`
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  height: 80px;
-  opacity: ${p => (p.isOptimistic ? 0.5 : 1)};
-  cursor: pointer;
-
-  &:hover {
-    background: ${p => rgba(p.theme.colors.wallet, 0.04)};
-  }
-`;
 
 type OwnProps = {
   operation: Operation,
@@ -57,53 +47,51 @@ type OwnProps = {
   text?: string,
 };
 
-type Props = {
-  ...OwnProps,
+type Props = OwnProps & {
   confirmationsNb: number,
+  dispatch: any,
 };
 
-class OperationComponent extends PureComponent<Props> {
-  static defaultProps = {
-    withAccount: false,
-    withAddress: true,
+const OperationComponent = ({
+  account,
+  parentAccount,
+  t,
+  operation,
+  withAccount,
+  text,
+  withAddress,
+  confirmationsNb,
+  dispatch,
+  onOperationClick
+}: Props) => {
+  const isOptimistic = operation.blockHeight === null;
+  const currency = getAccountCurrency(account);
+  const unit = getAccountUnit(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
+
+  const onClaim = () => {
+    console.log("in onClaim");
+    dispatch(
+      openModal("MODAL_SIGN_MESSAGE", {
+        account,
+        parentAccount,
+        message: operation.extra.claimableHash,
+      }),
+    );
   };
 
-  onOperationClick = () => {
-    const { account, parentAccount, onOperationClick, operation } = this.props;
-    onOperationClick(operation, account, parentAccount);
+  const onReject = () => {
+    // Do something on reject
   };
 
-  onClaim = () => {
-    const { account, parentAccount, onOperationClick, operation } = this.props;
-    onOperationClick(operation, account, parentAccount);
-  };
-
-  onReject = () => {
-    const { account, parentAccount, onOperationClick, operation } = this.props;
-    onOperationClick(operation, account, parentAccount);
-  };
-
-  render() {
-    const {
-      account,
-      parentAccount,
-      t,
-      operation,
-      withAccount,
-      text,
-      withAddress,
-      confirmationsNb,
-    } = this.props;
-    const isOptimistic = operation.blockHeight === null;
-    const currency = getAccountCurrency(account);
-    const unit = getAccountUnit(account);
-    const mainAccount = getMainAccount(account, parentAccount);
-    const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-    return (
+  return (
       <OperationRow
         className="operation-row"
         isOptimistic={isOptimistic}
-        onClick={this.onOperationClick}
+        onClick={() => {
+          onOperationClick(operation, account, parentAccount)
+        }}
       >
         <ConfirmationCell
           operation={operation}
@@ -118,10 +106,10 @@ class OperationComponent extends PureComponent<Props> {
         <div style={{ width: "48px", paddingRight: "4px", paddingLeft: "4px" }}>
           {operation.extra.isClaiming && (
             <Box gap={"2px"} horizontal={true}>
-              <Button small primary onClick={this.onClaim}>
+              <Button small primary onClick={onClaim}>
                 Claim
               </Button>
-              <Button small inverted onClick={this.onReject}>
+              <Button small inverted onClick={onReject}>
                 Reject
               </Button>
             </Box>
@@ -134,12 +122,36 @@ class OperationComponent extends PureComponent<Props> {
           isConfirmed={isConfirmed}
         />
       </OperationRow>
-    );
-  }
-}
+  );
+};
 
-const ConnectedOperationComponent: React$ComponentType<OwnProps> = connect(mapStateToProps)(
+OperationComponent.defaultProps = {
+  withAccount: false,
+  withAddress: true,
+};
+
+const ConnectedOperationComponent: ComponentType<OwnProps> = connect(mapStateToProps)(
   OperationComponent,
 );
+
+
+const OperationRow = styled(Box).attrs(() => ({
+  horizontal: true,
+  alignItems: "center",
+  ff: "Inter|SemiBold",
+  fontSize: 3,
+  color: "palette.text.shade100",
+  px: 4,
+  py: 3,
+}))<any>`
+  cursor: pointer;
+  border-bottom: 1px solid ${({theme}) => rgba(theme.colors.palette.text.shade20, 0.2)};
+  &:hover {
+    background: ${({theme}) => rgba(theme.colors.palette.text.shade20, 0.1)};
+  }
+  &:last-child {
+    border-bottom: none;
+  }
+`;
 
 export default ConnectedOperationComponent;

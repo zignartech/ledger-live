@@ -48,15 +48,17 @@ const mapDispatchToProps = {
 
 type Props = {
   account: AccountLike,
-  parentAccount?: ?Account,
+  parentAccount: Account,
   accounts: AccountLike[],
   allAccounts: AccountLike[],
-  openModal: (string, Object) => *,
+  openModal: Function,
   t: TFunction,
-  withAccount?: boolean,
+  withAccount: boolean,
   withSubAccounts?: boolean,
   title?: string,
-  filterOperation?: (Operation, AccountLike) => boolean,
+  filterOperation?: (operation: Operation, AccountLike: 
+AccountLike
+    ) => boolean,
 };
 
 type State = {
@@ -113,7 +115,6 @@ export class OperationsList extends PureComponent<Props, State> {
           withSubAccounts,
           filterOperation,
         });
-
     const all = flattenAccounts(accounts || []).concat([account, parentAccount].filter(Boolean));
     const accountsMap = keyBy(all, "id");
 
@@ -148,14 +149,14 @@ export class OperationsList extends PureComponent<Props, State> {
                   }
                   return (
                     <OperationC
-                      compact
                       operation={operation}
                       account={account}
                       parentAccount={parentAccount}
                       key={`${account.id}_${operation.id}`}
                       onOperationClick={this.handleClickOperation}
                       t={t}
-                      withAccount={withAccount}
+                      withAccount={withAccount !== undefined ? withAccount : true} 
+                      withAddress={false}                      
                     />
                   );
                 })}
