@@ -183,7 +183,7 @@ export interface AccountBridge<T extends TransactionCommon> {
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
   // Claim Operation in IOTA
-  claimOperation?:  SignOperationFnSignature<T>
+  // claimOperation?:  SignOperationFnSignature<T>
 }
 
 type ExpectFn = (...args: Array<any>) => any;

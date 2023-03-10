@@ -5,8 +5,6 @@ import styled from "styled-components";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
-import type { Operation, Account, AccountLike } from "@ledgerhq/types-live";
 import keyBy from "lodash/keyBy";
 import {
   groupAccountOperationsByDay,
@@ -46,37 +44,18 @@ const mapDispatchToProps = {
   openModal,
 };
 
-type Props = {
-  account: AccountLike,
-  parentAccount: Account,
-  accounts: AccountLike[],
-  allAccounts: AccountLike[],
-  openModal: Function,
-  t: TFunction,
-  withAccount: boolean,
-  withSubAccounts?: boolean,
-  title?: string,
-  filterOperation?: (operation: Operation, AccountLike: 
-AccountLike
-    ) => boolean,
-};
-
-type State = {
-  nbToShow: number,
-};
-
 const initialState = {
   nbToShow: 20,
 };
 
-export class OperationsList extends PureComponent<Props, State> {
+export class OperationsList extends PureComponent {
   static defaultProps = {
     withAccount: false,
   };
 
   state = initialState;
 
-  handleClickOperation = (operation: Operation, account: AccountLike, parentAccount?: Account) =>
+  handleClickOperation = (operation, account, parentAccount) =>
     setDrawer(OperationDetails, {
       operationId: operation.id,
       accountId: account.id,

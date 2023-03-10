@@ -24,7 +24,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   receive,
   signOperation,
-  claimOperation: signOperationClaim,
+  // claimOperation: signOperationClaim,
   broadcast,
 };
 export default {

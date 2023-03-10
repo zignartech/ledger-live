@@ -6,8 +6,6 @@ import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import { createStructuredSelector } from "reselect";
-import type { TFunction } from "react-i18next";
-import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountName,
@@ -20,7 +18,6 @@ import DateCell from "./DateCell";
 import AccountCell from "./AccountCell";
 import AddressCell from "./AddressCell";
 import AmountCell from "./AmountCell";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import Button from "../Button";
@@ -29,29 +26,13 @@ import { getAccountBridge } from "~/../../../libs/ledger-live-common/lib/bridge/
 
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (
-    state: any,
-    { account, parentAccount }: { account: AccountLike, parentAccount?: Account },
+    state,
+    { account, parentAccount },
   ) =>
     confirmationsNbForCurrencySelector(state, {
       currency: getMainAccount(account, parentAccount).currency,
     }),
 });
-
-type OwnProps = {
-  operation: Operation,
-  account: AccountLike,
-  parentAccount?: Account,
-  onOperationClick: (operation: Operation, account: AccountLike, parentAccount?: Account) => void,
-  t: TFunction,
-  withAccount: boolean,
-  withAddress: boolean,
-  text?: string,
-};
-
-type Props = OwnProps & {
-  confirmationsNb: number,
-  dispatch: any,
-};
 
 const OperationComponent = ({
   account,
@@ -64,7 +45,7 @@ const OperationComponent = ({
   confirmationsNb,
   dispatch,
   onOperationClick
-}: Props) => {
+}) => {
   const isOptimistic = operation.blockHeight === null;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
@@ -73,8 +54,8 @@ const OperationComponent = ({
   const bridge = getAccountBridge(account, parentAccount);
   const onClaim = () => {
     console.log("in onClaim");
-    const claimedOperation = bridge.claimOperation && bridge.claimOperation(mainAccount);
-    console.log("claimedOperation", claimedOperation);
+    // const claimedOperation = bridge.claimOperation && bridge.claimOperation(mainAccount);
+    // console.log("claimedOperation", claimedOperation);
     dispatch(
       openModal("MODAL_SIGN_MESSAGE", {
         account,
@@ -142,7 +123,7 @@ OperationComponent.defaultProps = {
   withAddress: true,
 };
 
-const ConnectedOperationComponent: ComponentType<OwnProps> = connect(mapStateToProps)(
+const ConnectedOperationComponent = connect(mapStateToProps)(
   OperationComponent,
 );
 
@@ -167,11 +148,4 @@ const OperationRow = styled(Box).attrs(() => ({
 `;
 
 export default ConnectedOperationComponent;
-function signOperationClaimableHash(operation: Operation, account: AccountLike, parentAccount: Account | undefined) {
-  const bridge = getAccountBridge(account, parentAccount);
-  const mainAccount = getMainAccount(account, parentAccount);
-  const transaction = bridge.createTransaction(mainAccount);
-  const signedTransaction = bridge.claimOperation(mainAccount, transaction, operation);
-  console.log("signedTransaction", signedTransaction);
-}
 
