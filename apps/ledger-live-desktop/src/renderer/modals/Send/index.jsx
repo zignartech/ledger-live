@@ -19,7 +19,7 @@ const MODAL_LOCKED: { [_: StepId]: boolean } = {
 };
 
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
-  const [stepId, setStep] = useState(() => initialStepId || "recipient");
+  const [stepId, setStep] = useState(() => initialStepId || "device");
   const handleReset = useCallback(() => setStep("recipient"), []);
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId];
