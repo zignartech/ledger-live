@@ -17,7 +17,8 @@ export default async function broadcast({
   const client = new SingleNodeClient(API_ENDPOINT, {
     powProvider: new WasmPowProvider(),
   });
-  const messageId = await client.blockSubmit(block, 30, 5);
+  const messageId = await client.blockSubmit(block, 180, 2);
   operation.id = `${messageId}-OUT`;
+  operation.hash = messageId;
   return operation;
 }

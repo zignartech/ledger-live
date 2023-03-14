@@ -2,13 +2,9 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 import type { Operation } from "@ledgerhq/types-live";
-import {
-  Block,
-  OutputResponse,
-  OutputsResponse,
-  TransactionPayload,
-} from "./types";
+import { Block, OutputResponse, TransactionPayload } from "./types";
 import { decimalToHex, uint8ArrayToAddress } from "../utils";
+import { IOutputsResponse } from "@iota/iota.js";
 
 const getIotaUrl = (route): string =>
   `${getEnv("API_IOTA_NODE")}${route || ""}`;
@@ -35,47 +31,22 @@ export const getUrl = (currencyId: string, route: string): string => {
   return url;
 };
 
-const fetchSingleTransaction = async (
+export const getAccountBalance = async (
   currencyId: string,
-  transactionId: string
-) => {
-  const {
-    data,
-  }: {
-    data;
-  } = await network({
-    method: "GET",
-    url: getUrl(
-      currencyId,
-      `/api/core/v2/transactions/${transactionId.slice(0, -4)}/included-block`
-    ),
-  });
-  return data as Block;
-};
-
-const fetchTimestamp = async (currencyId: string, outputId: string) => {
-  const {
-    data,
-  }: {
-    data;
-  } = await network({
-    method: "GET",
-    url: getUrl(
-      currencyId,
-      `/api/core/v2/outputs/${outputId.slice(0, -4)}/metadata`
-    ),
-  });
-  return data.milestoneTimestampBooked;
+  address: string
+): Promise<BigNumber> => {
+  const balance = await fetchBalance(currencyId, address);
+  return balance;
 };
 
 export const fetchBalance = async (
-  currecnyId: string,
+  currencyId: string,
   address: string
 ): Promise<BigNumber> => {
-  const outputs = await fetchAllOutputs(currecnyId, address);
+  const outputs = await fetchAllOutputs(currencyId, address, false);
   let balance = new BigNumber(0);
   for (let i = 0; i < outputs.items.length; i++) {
-    const output = await fetchSingleOutput(currecnyId, outputs.items[i]);
+    const output = await fetchSingleOutput(currencyId, outputs.items[i]);
     if (!output.metadata.isSpent) {
       balance = balance.plus(new BigNumber(output.output.amount));
     }
@@ -83,33 +54,26 @@ export const fetchBalance = async (
   return balance;
 };
 
-const fetchAllTransactions = async (currencyId: string, address: string) => {
-  const transactions: Block[] = [];
-  const timestamps: number[] = [];
-  const transactionIds: string[] = [];
-
-  const outputs = await fetchAllOutputs(currencyId, address);
-  for (let i = 0; i < outputs.items.length; i++) {
-    transactions.push(
-      await fetchSingleTransaction(currencyId, outputs.items[i])
-    );
-    const num = Number(await fetchTimestamp(currencyId, outputs.items[i]));
-    timestamps.push(num);
-    transactionIds.push(outputs.items[i]);
-  }
-  return { transactions, timestamps, transactionIds };
-};
-
-const fetchAllOutputs = async (currencyId: string, address: string) => {
+const fetchAllOutputs = async (
+  currencyId: string,
+  address: string,
+  hasExpiration?: boolean,
+  latestOperationTimestamp?: number
+) => {
+  const baseRoute = `/api/indexer/v1/outputs/basic?address=${address}`;
+  if (hasExpiration != undefined)
+    baseRoute.concat(`&hasExpiration=${hasExpiration}`);
+  if (latestOperationTimestamp != undefined)
+    baseRoute.concat(`&createdAfter=${latestOperationTimestamp}`);
   const {
     data,
   }: {
     data;
   } = await network({
     method: "GET",
-    url: getUrl(currencyId, `/api/indexer/v1/outputs/basic?address=${address}`),
+    url: getUrl(currencyId, baseRoute),
   });
-  return data as OutputsResponse;
+  return data as IOutputsResponse;
 };
 
 export const fetchSingleOutput = async (
@@ -127,28 +91,64 @@ export const fetchSingleOutput = async (
   return data as OutputResponse;
 };
 
-export const getAccount = async (
+const fetchSingleTransaction = async (
   currencyId: string,
-  address: string
-): Promise<any> => {
-  const balance = await fetchBalance(currencyId, address);
-  return {
-    blockHeight: 10,
-    balance,
-    spendableBalance: balance,
-    nonce: undefined, // FIXME:
-    lockedBalance: undefined, // FIXME:
-  };
+  transactionId: string
+) => {
+  const {
+    data,
+  }: {
+    data;
+  } = await network({
+    method: "GET",
+    url: getUrl(
+      currencyId,
+      `/api/core/v2/transactions/${transactionId}/included-block`
+    ),
+  });
+  return data as Block;
+};
+
+const fetchAllTransactions = async (
+  currencyId: string,
+  address: string,
+  latestOperationTimestamp: number
+) => {
+  const transactions: Block[] = [];
+  const timestamps: number[] = [];
+  const transactionIds: string[] = [];
+
+  const outputs = await fetchAllOutputs(
+    currencyId,
+    address,
+    undefined,
+    latestOperationTimestamp
+  );
+  for (let i = 0; i < outputs.items.length; i++) {
+    try {
+      const output = await fetchSingleOutput(currencyId, outputs.items[i]);
+      const transactionId = output.metadata.transactionId;
+      transactions.push(
+        await fetchSingleTransaction(currencyId, transactionId)
+      );
+      timestamps.push(output.metadata.milestoneTimestampBooked);
+      transactionIds.push(transactionId);
+    } catch (error) {
+      ("f");
+    }
+  }
+  return { transactions, timestamps, transactionIds };
 };
 
 export const getOperations = async (
   id: string,
   currencyId: string,
-  address: string
+  address: string,
+  latestOperationTimestamp: number
 ): Promise<Operation[]> => {
   const operations: Operation[] = [];
   const { transactions, timestamps, transactionIds } =
-    await fetchAllTransactions(currencyId, address);
+    await fetchAllTransactions(currencyId, address, latestOperationTimestamp);
   for (let i = 0; i < transactions.length; i++) {
     const operation = await txToOp(
       transactions[i],

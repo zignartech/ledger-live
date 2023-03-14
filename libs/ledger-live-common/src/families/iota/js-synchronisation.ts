@@ -4,7 +4,7 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
 import { encodeAccountId } from "../../account";
 
-import { getAccount, getOperations } from "./api";
+import { getAccountBalance, getOperations } from "./api";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { address, currency, initialAccount, derivationMode } = info;
@@ -19,20 +19,26 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
 
   // get the current account balance state depending your api implementation
-  const { blockHeight, balance, spendableBalance } = await getAccount(
-    currency.id,
-    address
-  );
+  const accountBalance = await getAccountBalance(currency.id, address);
+  const latestOperationTimestamp = oldOperations[0]
+    ? Math.floor(oldOperations[0].date.getTime())
+    : 0;
+
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, currency.id, address);
+  const newOperations = await getOperations(
+    accountId,
+    currency.id,
+    address,
+    latestOperationTimestamp
+  );
   const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {
-    balance,
-    spendableBalance,
-    operationsCount: operations.length,
-    blockHeight,
     id: accountId,
+    balance: accountBalance,
+    spendableBalance: accountBalance,
+    operationsCount: operations.length,
+    blockHeight: 10,
   };
 
   return { ...shape, operations };
