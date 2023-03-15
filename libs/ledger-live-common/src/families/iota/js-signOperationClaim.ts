@@ -278,9 +278,11 @@ export async function buildTransactionPayload(
 const signOperationClaim = ({
   account,
   deviceId,
+  claimedActivity,
 }: {
   account: Account;
   deviceId: DeviceId;
+  claimedActivity: ClaimedActivity;
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)((transport) => {
     return new Observable((o) => {
@@ -293,7 +295,8 @@ const signOperationClaim = ({
 
           const transactionPayload = await buildTransactionPayload(
             account,
-            transport
+            transport,
+            claimedActivity
           );
 
           o.next({
