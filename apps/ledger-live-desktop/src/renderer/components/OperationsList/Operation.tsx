@@ -1,7 +1,7 @@
 // @flow
 
-import React, { PureComponent } from "react";
-import { connect, useDispatch } from "react-redux";
+import React, { FC, PureComponent } from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -26,6 +26,7 @@ import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import Button from "../Button";
 import { openModal } from "~/renderer/actions/modals";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (state, { account, parentAccount }) =>
     confirmationsNbForCurrencySelector(state, {
@@ -63,7 +64,7 @@ type Props = OwnProps & {
   dispatch: any,
 };
 
-const OperationComponent = ({
+const OperationComponent: FC<any> = ({
   account,
   parentAccount,
   t,
@@ -80,15 +81,17 @@ const OperationComponent = ({
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = getAccountBridge(account, parentAccount) as any;
+  const device = useSelector(getCurrentDevice)
   const onClaim = () => {
     console.log("in onClaim");
-    dispatch(
-      openModal("MODAL_SEND", {
-        parentAccount: account,
-        account,
-      }),
-    );
+    console.log('bridge: ', bridge);
+    const data = bridge.claimOperation && bridge.claimOperation({
+      account,
+      transaction: operation,
+      deviceId: device && device.deviceId,
+    });
+    console.log(data)
   };
 
   const onReject = () => {

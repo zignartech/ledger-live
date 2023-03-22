@@ -41,7 +41,9 @@ export const getAccountBridge = (
   parentAccount?: Account | null
 ): AccountBridge<any> => {
   console.log('IN ACCOUNT BRIDGE')
+  console.log(account, parentAccount)
   const mainAccount = getMainAccount(account, parentAccount);
+  console.log('IN ACCOUNT BRIDGE 1', mainAccount)
   const { currency } = mainAccount;
   const { family } = currency;
   const { type } = decodeAccountId(mainAccount.id);
@@ -61,8 +63,12 @@ export const getAccountBridge = (
       }
     );
   }
-
+  console.log('IN ACCOUNT BRIDGE 2', jsBridges)
+  console.log('family', family)
+  console.log('IN ACCOUNT BRIDGE 3', jsBridges[family])
   const jsBridge = jsBridges[family];
+  
+  console.log('IN ACCOUNT BRIDGE 4', jsBridge.accountBridge)
   if (type === "libcore") {
     // migrate from libcore via JS
     if (jsBridge) {
@@ -75,9 +81,11 @@ export const getAccountBridge = (
       }
     );
   }
-
   if (jsBridge) return jsBridge.accountBridge;
   throw new CurrencyNotSupported("currency not supported " + currency.id, {
     currencyName: mainAccount.currency.name,
   });
 };
+
+
+

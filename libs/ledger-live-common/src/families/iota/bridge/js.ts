@@ -11,7 +11,7 @@ import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import { currencyBridge, sync } from "../js-synchronisation";
 import broadcast from "../js-broadcast";
-import signOperationClaim from "../js-signOperationClaim";
+import claimOperation from "../js-signOperationClaim";
 
 const receive = makeAccountBridgeReceive();
 
@@ -24,7 +24,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   receive,
   signOperation,
-  claimOperation: signOperationClaim,
+  claimOperation,
   broadcast,
 };
 export default {

@@ -3,36 +3,36 @@
 // a WalletBridge is implemented on renderer side.
 // this is an abstraction on top of underlying blockchains api (libcore / ethereumjs / ripple js / ...)
 // that would directly be called from UI needs.
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, Account, AccountRaw } from "./account";
+import { BigNumber } from 'bignumber.js';
+import { Observable } from 'rxjs';
+import type { CryptoCurrency } from '@ledgerhq/types-cryptoassets';
+import type { AccountLike, Account, AccountRaw } from './account';
 import type {
   SignOperationEvent,
   SignedOperation,
   TransactionCommon,
   TransactionStatusCommon,
-} from "./transaction";
-import type { Operation } from "./operation";
-import type { DerivationMode } from "./derivation";
-import type { SyncConfig } from "./pagination";
+} from './transaction';
+import type { Operation } from './operation';
+import type { DerivationMode } from './derivation';
+import type { SyncConfig } from './pagination';
 import {
   CryptoCurrencyIds,
   NFTCollectionMetadata,
   NFTCollectionMetadataResponse,
   NFTMetadata,
   NFTMetadataResponse,
-} from "./nft";
+} from './nft';
 
 export type ScanAccountEvent = {
-  type: "discovered";
+  type: 'discovered';
   account: Account;
 };
 /**
  * More events will come in the future
  */
 export type ScanAccountEventRaw = {
-  type: "discovered";
+  type: 'discovered';
   account: AccountRaw;
 };
 
@@ -159,6 +159,8 @@ export interface AccountBridge<T extends TransactionCommon> {
   // it needs to be a serializable JS object
   createTransaction(account: AccountLike): T;
   updateTransaction(t: T, patch: Partial<T>): T;
+  // Claim Operation for IOTA
+  claimOperation?: ClaimOperationFnSignature;
   // prepare the remaining missing part of a transaction typically from network (e.g. fees)
   // and fulfill it in a new transaction object that is returned (async)
   // It can fails if the the network is down.
@@ -187,8 +189,6 @@ export interface AccountBridge<T extends TransactionCommon> {
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
-  // Claim Operation in IOTA
-  claimOperation?: ClaimOperationFnSignature;
 }
 
 type ExpectFn = (...args: Array<any>) => any;

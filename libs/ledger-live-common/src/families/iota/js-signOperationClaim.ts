@@ -275,7 +275,7 @@ export async function buildTransactionPayload(
  * @param indexation.data Optional index data.
  * @returns The id of the message created and the remainder address if one was needed.
  */
-const signOperationClaim = ({
+const claimOperation = ({
   account,
   deviceId,
   claimedActivity,
@@ -334,4 +334,4 @@ const signOperationClaim = ({
     });
   });
 
-export default signOperationClaim;
+export default claimOperation;
