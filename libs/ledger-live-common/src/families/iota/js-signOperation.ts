@@ -16,11 +16,9 @@ import {
   UnlockTypes,
   REFERENCE_UNLOCK_TYPE,
   SIGNATURE_UNLOCK_TYPE,
-  IndexerPluginClient,
   SingleNodeClient,
   DEFAULT_PROTOCOL_VERSION,
   IBlock,
-  IOutputsResponse,
   TransactionHelper,
   IUTXOInput,
   OutputTypes,
@@ -45,13 +43,11 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { getUrl } from "./api";
+import { fetchAllOutputs, getUrl } from "./api";
 import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
 } from "./hw-app-iota/constants";
-import { WasmPowProvider } from "@iota/pow-wasm.js";
-// import { NodePowProvider } from "@iota/pow-node.js";
 
 async function buildOptimisticOperation({
   account,
@@ -99,9 +95,7 @@ export async function buildTransactionPayload(
   // Instance client local pow and iota transport
   const iota = new Iota(transport);
   const api_endpoint = getUrl(account.currency.id, "");
-  const client = new SingleNodeClient(api_endpoint, {
-    powProvider: new WasmPowProvider(),
-  });
+  const client = new SingleNodeClient(api_endpoint);
 
   // Fetch node info
   const protocolInfo = await client.protocolInfo();
@@ -109,20 +103,16 @@ export async function buildTransactionPayload(
   // Address owner
   const genesisWalletAddressBech32 = account.freshAddress;
 
-  // Because we are using the genesis address we must use send advanced as the input address is
-  // not calculated from a Bip32 path, if you were doing a wallet to wallet transfer you can just use send
-  // which calculates all the inputs/outputs for you
-  const indexerPlugin = new IndexerPluginClient(client);
-
   /*******************************
    ** Prepare Transaction
    *******************************/
 
   // 1. Fetch outputId with funds to be used as input
   // Indexer returns outputIds of matching outputs.
-  const genesisAddressOutputs = await fetchAndWaitForBasicOutputs(
+  const genesisAddressOutputs = await fetchAllOutputs(
+    account.currency.id,
     genesisWalletAddressBech32,
-    indexerPlugin
+    false
   );
 
   let totalFunds: BigNumber = new BigNumber(0);
@@ -268,7 +258,6 @@ export async function buildTransactionPayload(
     inputs,
     inputsCommitment,
     outputs,
-    payload: undefined,
   };
 
   const wsTsxEssence = new WriteStream();
@@ -341,41 +330,6 @@ export async function buildTransactionPayload(
   };
 
   return transactionPayload;
-}
-
-async function fetchAndWaitForBasicOutputs(
-  addressBech32: string,
-  indexerPlugin: IndexerPluginClient
-): Promise<IOutputsResponse> {
-  let outputsResponse: IOutputsResponse = {
-    ledgerIndex: 0,
-    cursor: "",
-    pageSize: "",
-    items: [],
-  };
-  const maxTries = 10;
-  let tries = 0;
-  while (outputsResponse.items.length == 0) {
-    if (tries > maxTries) {
-      break;
-    }
-    tries++;
-    outputsResponse = await indexerPlugin.basicOutputs({
-      addressBech32: addressBech32,
-      hasStorageDepositReturn: false,
-      hasExpiration: false,
-      hasTimelock: false,
-      hasNativeTokens: false,
-    });
-    if (outputsResponse.items.length == 0) {
-      await new Promise((f) => setTimeout(f, 1000));
-    }
-  }
-  if (tries > maxTries) {
-    throw new Error("Didn't find any outputs for address");
-  }
-
-  return outputsResponse;
 }
 
 /**
