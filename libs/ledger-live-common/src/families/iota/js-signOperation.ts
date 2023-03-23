@@ -43,7 +43,7 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { fetchAllOutputs, getUrl } from "./api";
+import { fetchAllOutputs, getAccountBalance, getUrl } from "./api";
 import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
@@ -115,99 +115,39 @@ export async function buildTransactionPayload(
     false
   );
 
-  let totalFunds: BigNumber = new BigNumber(0);
   const amountToSend: BigNumber = new BigNumber(transaction.amount);
 
   // 2. Prepare Inputs for the transaction
   const inputs: IUTXOInput[] = [];
   const consumingOutputs: OutputTypes[] = [];
-  let hasRemainder = false;
 
-  for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-    // Fetch the output itself
-    const output = await client.output(genesisAddressOutputs.items[i]);
-    if (!output.metadata.isSpent && output.output.type === BASIC_OUTPUT_TYPE)
-      totalFunds = totalFunds.plus((output.output as IBasicOutput).amount);
-  }
+  const balance = await getAccountBalance(
+    account.currency.id,
+    genesisWalletAddressBech32
+  );
 
-  if (amountToSend.isGreaterThan(totalFunds)) {
+  if (amountToSend.isGreaterThan(balance)) {
     throw new Error("Not enough funds to send");
   }
 
-  if (totalFunds.isEqualTo(amountToSend)) {
-    for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-      // Fetch the all outputs itself
-      const output = await client.output(genesisAddressOutputs.items[i]);
-      if (
-        !output.metadata.isSpent &&
-        output.output.type === BASIC_OUTPUT_TYPE
-      ) {
-        inputs.push(
-          TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
-        );
-        consumingOutputs.push(output.output);
+  let consumedBalance: BigNumber = new BigNumber(0);
+  let hasRemainder = false;
+  for (const element of genesisAddressOutputs.items) {
+    const output = await client.output(element);
+    if (!output.metadata.isSpent && output.output.type === BASIC_OUTPUT_TYPE) {
+      consumedBalance = consumedBalance.plus(output.output.amount);
+      inputs.push(TransactionHelper.inputFromOutputId(element));
+      consumingOutputs.push(output.output);
+      if (consumedBalance.isEqualTo(amountToSend)) {
+        break;
+      }
+      // Fetch the outputs itself with remainder
+      if (consumedBalance.isGreaterThan(amountToSend)) {
+        hasRemainder = true;
+        break;
       }
     }
   }
-
-  let match = false;
-
-  if (totalFunds.isGreaterThan(amountToSend)) {
-    for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-      // Fetch the output itself match with amount to send
-      const output = await client.output(genesisAddressOutputs.items[i]);
-      if (
-        !output.metadata.isSpent &&
-        output.output.type === BASIC_OUTPUT_TYPE
-      ) {
-        if (
-          new BigNumber((output.output as IBasicOutput).amount).isEqualTo(
-            amountToSend
-          )
-        ) {
-          inputs.push(
-            TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
-          );
-          consumingOutputs.push(output.output);
-          match = true;
-          break;
-        }
-      }
-    }
-  }
-
-  if (totalFunds.isGreaterThan(amountToSend) && !match) {
-    let consumedBalance: BigNumber = new BigNumber(0);
-    for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-      const output = await client.output(genesisAddressOutputs.items[i]);
-      if (
-        !output.metadata.isSpent &&
-        output.output.type === BASIC_OUTPUT_TYPE
-      ) {
-        consumedBalance = consumedBalance.plus(
-          (output.output as IBasicOutput).amount
-        );
-        inputs.push(
-          TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
-        );
-        consumingOutputs.push(output.output);
-        if (consumedBalance.isEqualTo(amountToSend)) {
-          break;
-        }
-        // Fetch the outputs itself with remainder
-        if (consumedBalance.isGreaterThan(amountToSend)) {
-          totalFunds = consumedBalance;
-          hasRemainder = true;
-          break;
-        }
-      }
-    }
-  }
-
-  // Start with finding the outputs. They need to have
-  // a specific structure
-
-  const pubKeyHash = addressToPubKeyHash(transaction.recipient);
 
   // 3. Create outputs
   const outputs: IBasicOutput[] = [];
@@ -220,7 +160,7 @@ export async function buildTransactionPayload(
         type: ADDRESS_UNLOCK_CONDITION_TYPE,
         address: {
           type: ED25519_ADDRESS_TYPE,
-          pubKeyHash: pubKeyHash,
+          pubKeyHash: addressToPubKeyHash(transaction.recipient),
         },
       },
     ],
@@ -230,7 +170,7 @@ export async function buildTransactionPayload(
   if (hasRemainder) {
     outputs.push({
       type: BASIC_OUTPUT_TYPE,
-      amount: totalFunds.minus(amountToSend).toString(),
+      amount: consumedBalance.minus(amountToSend).toString(),
       nativeTokens: [],
       unlockConditions: [
         {
