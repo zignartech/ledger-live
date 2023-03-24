@@ -95,15 +95,7 @@ const OperationComponent: FC<any> = ({
       account,
       transaction: operation || {},
       deviceId: device && device.deviceId || "",
-    }).pipe(filter((e:any) =>{
-      console.log("in filter");
-      console.log('e: ', e);
-      return e.type === "result";
-    }), concatMap((e:any) => {
-      console.log("in concatMap");
-      console.log('e: ', e);
-      return e.result;
-    })).toPromise();
+    })
   };
 
   const onReject = () => {
