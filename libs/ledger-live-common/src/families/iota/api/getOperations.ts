@@ -86,13 +86,16 @@ const txToOp = async (
   let type: "IN" | "OUT" = "IN"; // default is IN. If the address is found in an input, it will be changed to "OUT"
 
   // senders logic
-  for (const element of inputs) {
-    const transactionId = element.transactionId;
-    const outputIndex = decimalToHex(element.transactionOutputIndex);
-    const senderOutput = (
-      await fetchSingleOutput(currencyId, transactionId + outputIndex)
-    ).output;
-    const senderUnlockCondition: any = senderOutput.unlockConditions[0];
+  for (const input of inputs) {
+    const transactionId = input.transactionId;
+    const outputIndex = decimalToHex(input.transactionOutputIndex);
+    const { output } = await fetchSingleOutput(
+      currencyId,
+      transactionId + outputIndex
+    );
+    const basicOuput = output as IBasicOutput;
+
+    const senderUnlockCondition: any = basicOuput.unlockConditions[0];
     const senderPubKeyHash: any = senderUnlockCondition.address.pubKeyHash;
     const senderUint8Array = Uint8Array.from(
       senderPubKeyHash
@@ -106,30 +109,31 @@ const txToOp = async (
   }
 
   // receivers logic
-  for (const element of outputs) {
-    if (outputCheck(element)) {
-      const a = element as IBasicOutput;
-      const recipientUnlockCondition: any = a.unlockConditions[0];
-      const recipientPubKeyHash: any =
-        recipientUnlockCondition.address.pubKeyHash;
-      const recipientUint8Array = Uint8Array.from(
-        recipientPubKeyHash
-          .match(/.{1,2}/g) // magic
-          .map((byte: string) => parseInt(byte, 16))
-      );
-      // the address of the recipient
-      const recipient = uint8ArrayToAddress(currencyId, recipientUint8Array);
+  for (const output of outputs) {
+    // if (outputCheck(output)) {
+    const basicOuput = output as IBasicOutput;
 
-      // In case the transaction is incoming:
-      // add to the value all amount coming into the address.
-      // If the transaction is outgoing:
-      // add to the value all amount going to other addresses.
-      const amount: number = +element.amount;
-      if (type == "IN" && recipient == address) value += amount;
-      else if (type == "OUT" && recipient != address) value += amount; // otherwise, it means that it's a remainder and doesn't count into the value
+    const recipientUnlockCondition: any = basicOuput.unlockConditions[0];
+    const recipientPubKeyHash: any =
+      recipientUnlockCondition.address.pubKeyHash;
+    const recipientUint8Array = Uint8Array.from(
+      recipientPubKeyHash
+        .match(/.{1,2}/g) // magic
+        .map((byte: string) => parseInt(byte, 16))
+    );
+    // the address of the recipient
+    const recipient = uint8ArrayToAddress(currencyId, recipientUint8Array);
 
-      recipients.push(recipient);
-    }
+    // In case the transaction is incoming:
+    // add to the value all amount coming into the address.
+    // If the transaction is outgoing:
+    // add to the value all amount going to other addresses.
+    const amount: number = +output.amount;
+    if (type == "IN" && recipient == address) value += amount;
+    else if (type == "OUT" && recipient != address) value += amount; // otherwise, it means that it's a remainder and doesn't count into the value
+
+    recipients.push(recipient);
+    // }
   }
 
   const op: Operation = {
@@ -151,12 +155,12 @@ const txToOp = async (
 };
 
 // Only outputs that have one o
-const outputCheck = (output: any): boolean => {
-  if (
-    output.type == 3 && // it's a BasicOutput
-    output.unlockConditions.length == 1 && // no other unlockConditions
-    output.unlockConditions[0].type == 0 // it's an AddressUnlockCondition
-  ) {
-    return true;
-  } else return false;
-};
+// const outputCheck = (output: any): boolean => {
+//   if (
+//     output.type == 3 && // it's a BasicOutput
+//     output.unlockConditions.length == 1 && // no other unlockConditions
+//     output.unlockConditions[0].type == 0 // it's an AddressUnlockCondition
+//   ) {
+//     return true;
+//   } else return false;
+// };
