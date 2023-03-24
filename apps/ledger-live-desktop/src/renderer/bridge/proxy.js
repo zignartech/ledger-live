@@ -151,16 +151,22 @@ export const getAccountBridge = (
       .pipe(map(raw => BigNumber(raw)))
       .toPromise();
 
-  const claimOperation = ({ account, transaction, deviceId }) =>
-    command("AccountClaimOperation")({
-      account: toAccountRaw(account),
+  const claimOperation = ({ account, transaction, deviceId }) => {
+    console.log("claimOperation");
+    console.log(account);
+    console.log(transaction);
+    console.log(deviceId);
+    return command("AccountClaimOperation")({
+      account: account ? toAccountRaw(account) : null,
+      transaction: operation || null,
       deviceId,
-      claimedActivity: {
-        isClaimed: true,
-        claimingTransactionId: transaction.id,
-        claimedTimestamp: Date.now(),
-      },
-    }).pipe(map(raw => fromSignOperationEventRaw(raw, account.id)));
+    }).pipe(
+      map(raw => {
+        console.log(raw);
+        return fromSignOperationEventRaw(raw, account.id);
+      }),
+    );
+  };
 
   return {
     createTransaction,

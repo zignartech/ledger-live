@@ -27,6 +27,8 @@ import Button from "../Button";
 import { openModal } from "~/renderer/actions/modals";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { concatMap, filter } from "rxjs/operators";
+
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (state, { account, parentAccount }) =>
     confirmationsNbForCurrencySelector(state, {
@@ -83,15 +85,25 @@ const OperationComponent: FC<any> = ({
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   const bridge = getAccountBridge(account, parentAccount) as any;
   const device = useSelector(getCurrentDevice)
-  const onClaim = () => {
+  const onClaim = async () => {
     console.log("in onClaim");
     console.log('bridge: ', bridge);
-    const data = bridge.claimOperation && bridge.claimOperation({
+    console.log('account: ', account);
+    console.log('transaction: ', t);
+    console.log('device: ', device);
+    bridge.claimOperation && bridge.claimOperation({
       account,
-      transaction: operation,
-      deviceId: device && device.deviceId,
-    });
-    console.log(data)
+      transaction: operation || {},
+      deviceId: device && device.deviceId || "",
+    }).pipe(filter((e:any) =>{
+      console.log("in filter");
+      console.log('e: ', e);
+      return e.type === "result";
+    }), concatMap((e:any) => {
+      console.log("in concatMap");
+      console.log('e: ', e);
+      return e.result;
+    })).toPromise();
   };
 
   const onReject = () => {

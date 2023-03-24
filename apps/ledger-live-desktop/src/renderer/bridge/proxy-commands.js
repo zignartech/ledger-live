@@ -196,6 +196,25 @@ const cmdAccountEstimateMaxSpendable = (o: {
   );
 };
 
+const cmdAccountClaimOperation = ({
+  account,
+  claimedActivity,
+  deviceId
+}) => {
+  const accountInstance = fromAccountRaw(account);
+  const bridge = bridgeImpl.getAccountBridge(accountInstance, null);
+  return bridge.claimOperation({
+    account: accountInstance,
+    claimedActivity,
+    deviceId
+  }).then(res => {
+    console.log("claimOperation result", res);
+    return res;
+  });
+};
+
+
+
 export const commands = {
   CurrencyPreload: cmdCurrencyPreload,
   AccountSync: cmdAccountSync,
@@ -203,6 +222,7 @@ export const commands = {
   AccountGetTransactionStatus: cmdAccountGetTransactionStatus,
   AccountPrepareTransaction: cmdAccountPrepareTransaction,
   AccountSignOperation: cmdAccountSignOperation,
+  AccountClaimOperation: cmdAccountClaimOperation,
   AccountBroadcast: cmdAccountBroadcast,
   CurrencyScanAccounts: cmdCurrencyScanAccounts,
   AccountEstimateMaxSpendable: cmdAccountEstimateMaxSpendable,
