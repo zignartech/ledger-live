@@ -299,6 +299,8 @@ const claimOperation = ({
             claimedActivity
           );
 
+          console.log('transactionPayload', transactionPayload)
+
           o.next({
             type: "device-signature-granted",
           });
