@@ -151,11 +151,11 @@ export const getAccountBridge = (
       .pipe(map(raw => BigNumber(raw)))
       .toPromise();
 
-  const claimOperation = ({ account, claimedActivity, deviceId }) =>
+  const claimOperation = ({ account, claimedActivity, device }) =>
     command("AccountClaimOperation")({
       account: toAccountRaw(account),
       claimedActivity,
-      deviceId,
+      device
     })
       .pipe(map(raw => fromOperationRaw(raw, account.id)))
       .toPromise();

@@ -23,6 +23,7 @@ import {
   NFTMetadata,
   NFTMetadataResponse,
 } from './nft';
+import { Device } from '@ledgerhq/types-devices';
 
 export type ScanAccountEvent = {
   type: 'discovered';
@@ -80,7 +81,7 @@ export type ClaimedActivity = {
 
 export type ClaimOperationArg0 = {
   account: Account;
-  deviceId: DeviceId;
+  device: Device;
   claimedActivity: ClaimedActivity;
 };
 

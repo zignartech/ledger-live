@@ -199,22 +199,19 @@ const cmdAccountEstimateMaxSpendable = (o: {
 const cmdAccountClaimOperation = (o:{
   account,
   claimedActivity,
-  deviceId
+  device
 }) => {
   const accountInstance = fromAccountRaw(o.account);
   const bridge = bridgeImpl.getAccountBridge(accountInstance, null);
   return bridge.claimOperation({
     account: accountInstance,
     claimedActivity: o.claimedActivity,
-    deviceId: o.deviceId
+    device: o.device
   }).pipe(
-    map(toSignOperationEventRaw),
-    tap(e => {
-      console.log('e', e)
-      if (e.type === "signed") {
-        log("transation-summary", "✔️ has been signed!", { signedOperation: e.signOperation });
-      }
-    }),
+    map(toOperationRaw => {
+      console.log("claimOperation", toOperationRaw);
+      return toOperationRaw;
+    })
   );
 };
 

@@ -89,14 +89,19 @@ const OperationComponent: FC<any> = ({
     console.log("in onClaim");
     console.log('bridge: ', bridge);
     console.log('account: ', account);
+    console.log('operation: ', operation);
     console.log('transaction: ', t);
     console.log('device: ', device);
+    operation.extra.claimingTransactionId = "0x1234567890";
+    operation.extra.isClaimed = operation.extra.isClaiming;
+    operation.extra.claimedTimestamp = Date.now();
     bridge.claimOperation && bridge.claimOperation({
       account,
-      transaction: operation || {},
-      deviceId: device && device.deviceId || "",
+      device: device,
+      claimActivity: operation.extra
     })
   };
+
 
   const onReject = () => {
     // Do something on reject

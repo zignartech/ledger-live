@@ -1,7 +1,7 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-import { WriteStream } from "@iota/util.js";
+import { WriteStream } from '@iota/util.js';
 import {
   serializeTransactionEssence,
   ED25519_ADDRESS_TYPE,
@@ -23,32 +23,34 @@ import {
   TransactionHelper,
   IUTXOInput,
   OutputTypes,
-} from "@iota/iota.js";
+} from '@iota/iota.js';
 
-import Iota from "./hw-app-iota";
+import Iota from './hw-app-iota';
 import {
   addressToPubKeyHash,
   arrayToHex,
   deviceResponseToUint8Array,
-} from "./utils";
+} from './utils';
 
 import {
   Account,
   SignOperationEvent,
   DeviceId,
   Operation,
-} from "@ledgerhq/types-live";
-import { withDevice } from "../../hw/deviceAccess";
-import { Observable } from "rxjs";
-import BigNumber from "bignumber.js";
-import Transport from "@ledgerhq/hw-transport";
-import { log } from "@ledgerhq/logs";
-import { fetchAndWaitForBasicOutputs, getUrl } from "./api";
+} from '@ledgerhq/types-live';
+import { withDevice } from '../../hw/deviceAccess';
+import { Observable } from 'rxjs';
+import BigNumber from 'bignumber.js';
+import Transport from '@ledgerhq/hw-transport';
+import { log } from '@ledgerhq/logs';
+import { fetchAndWaitForBasicOutputs, getUrl } from './api';
 import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
-} from "./hw-app-iota/constants";
-import { WasmPowProvider } from "@iota/pow-wasm.js";
+} from './hw-app-iota/constants';
+import { WasmPowProvider } from '@iota/pow-wasm.js';
+import { useMemo } from 'react';
+import { Device } from '@ledgerhq/types-devices';
 // import { NodePowProvider } from "@iota/pow-node.js";
 
 interface ClaimedActivity {
@@ -70,8 +72,8 @@ async function buildOptimisticOperation({
 }): Promise<Operation> {
   const operation: Operation = {
     id: `${account.id}--OUT`,
-    hash: "",
-    type: "OUT",
+    hash: '',
+    type: 'OUT',
     value: value,
     fee: new BigNumber(0),
     blockHash: null,
@@ -102,7 +104,7 @@ export async function buildTransactionPayload(
 ): Promise<ITransactionPayload> {
   // Instance client local pow and iota transport
   const iota = new Iota(transport);
-  const api_endpoint = getUrl(account.currency.id, "");
+  const api_endpoint = getUrl(account.currency.id, '');
   const client = new SingleNodeClient(api_endpoint, {
     powProvider: new WasmPowProvider(),
   });
@@ -204,8 +206,8 @@ export async function buildTransactionPayload(
 
   // we have to add the key indices for each input after the essence
   for (let i = 0; i < inputs.length; i++) {
-    wsTsxEssence.writeUInt32("bip32_index", pathArray[3]);
-    wsTsxEssence.writeUInt32("bip32_change", pathArray[4]);
+    wsTsxEssence.writeUInt32('bip32_index', pathArray[3]);
+    wsTsxEssence.writeUInt32('bip32_change', pathArray[4]);
   }
 
   const essenceFinal = Buffer.from(wsTsxEssence.finalBytes());
@@ -277,21 +279,31 @@ export async function buildTransactionPayload(
  */
 const claimOperation = ({
   account,
-  deviceId,
+  device,
   claimedActivity,
 }: {
   account: Account;
-  deviceId: DeviceId;
+  device: Device;
   claimedActivity: ClaimedActivity;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) => {
+  withDevice(device.deviceId)((transport) => {
     return new Observable((o) => {
       void (async function () {
         try {
           o.next({
-            type: "device-signature-requested",
+            type: 'device-signature-requested',
           });
-          log("building transaction payload...");
+
+          const deviceInfo = await useMemo(
+            () => ({
+              ...device,
+            }),
+            [device]
+          );
+
+          if (!deviceInfo) {
+            throw new Error('device not found');
+          }
 
           const transactionPayload = await buildTransactionPayload(
             account,
@@ -299,19 +311,23 @@ const claimOperation = ({
             claimedActivity
           );
 
-          console.log('transactionPayload', transactionPayload)
+          console.log('transactionPayload', transactionPayload);
 
-          o.next({
-            type: "device-signature-granted",
-          });
-
+          if (!deviceInfo.isLocked) {
+            o.next({
+              type: 'device-signature-granted',
+            });
+          } else {
+            throw new Error('device is locked');
+          }
+          
           // const recipients: string[] = [transaction.recipient];
           const value = transactionPayload.essence.outputs[0].amount;
           const block: IBlock = {
             protocolVersion: DEFAULT_PROTOCOL_VERSION,
             parents: [],
             payload: transactionPayload,
-            nonce: "0",
+            nonce: '0',
           };
           const operation = await buildOptimisticOperation({
             account: account,
@@ -321,7 +337,7 @@ const claimOperation = ({
           });
 
           o.next({
-            type: "signed",
+            type: 'signed',
             signedOperation: {
               operation,
               signature: JSON.stringify(block),
