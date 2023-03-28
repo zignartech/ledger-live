@@ -105,6 +105,9 @@ import MODAL_LEND_WITHDRAW_FLOW from "../screens/lend/modals/Withdraw";
 import MODAL_LEND_NO_ETHEREUM_ACCOUNT from "../screens/lend/modals/NoEthereumAccount";
 import MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT from "../screens/lend/modals/EmptyAccountDeposit";
 
+//CLAIM OPERATION
+import MODAL_SIGN_CLAIMING from "./SignClaiming";
+
 const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_WEBSOCKET_BRIDGE,
   MODAL_EXPORT_OPERATIONS,
@@ -198,6 +201,8 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
+  // Claim Operation
+  MODAL_SIGN_CLAIMING,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop
