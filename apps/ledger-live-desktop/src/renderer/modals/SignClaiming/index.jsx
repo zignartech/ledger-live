@@ -1,3 +1,5 @@
+import Modal from "~/renderer/components/Modal";
+
 const ClaimOperationModal = ({
     t,
     account,

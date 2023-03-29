@@ -137,8 +137,6 @@ const OperationComponent: FC<any> = ({
   );
 };
 
-const ConnectedOperationComponent: any = connect(mapStateToProps)(
-  OperationComponent,
-);
+const ConnectedOperationComponent: any = connect(mapStateToProps)(OperationComponent);
 
 export default ConnectedOperationComponent;
