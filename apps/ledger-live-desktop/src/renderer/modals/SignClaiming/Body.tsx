@@ -25,13 +25,7 @@ interface Props {
   onChangeStepId: (stepId: number) => void;
   setError: (error?: Error) => void;
   stepId: number;
-  params: {
-    account: Account;
-    canEditFees: boolean;
-    parentAccount: Account | null | undefined;
-    transactionData: any;
-  };
-  data: any;
+  params:any;
 }
 
 const StepDevice = () => {
@@ -40,8 +34,7 @@ const StepDevice = () => {
   )
 }
 
-const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) => {
-  console.log(data, 'IN MODAL')
+const Body = ({ onChangeStepId, setError, stepId, params }: Props) => {
   const device = useSelector(getCurrentDevice);
   console.log(device, 'DEVICE')
   const dispatch = useDispatch();
@@ -60,13 +53,13 @@ const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) => {
 
   const stepperProps = {
     title: t("signmessage.title"),
-    account: data.account,
+    account: params.account,
     onStepChange: onChangeStepId,
     stepId,
     steps,
-    message: data.message,
-    onConfirmationHandler: data.onConfirmationHandler,
-    onFailHandler: data.onFailHandler,
+    message: 'test',
+    onConfirmationHandler: params.onTransactionSigned,
+    onFailHandler: params.onReject,
     onClose: () => dispatch(closeModal("MODAL_SIGN_CLAIMING")),
   } as any;
 
