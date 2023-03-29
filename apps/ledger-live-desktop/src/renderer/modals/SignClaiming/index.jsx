@@ -23,15 +23,15 @@ const ClaimOperationModal = ({
         <Modal
             name="MODAL_SIGN_CLAIMING"
             centered
-            refocusWhenChange={state.stepId || "device"}
+            refocusWhenChange={state?.stepId || "device"}
             onHide={handleReset}
             preventBackdropClick
             render={({ onClose, data }) => (
                 <Body
-                    stepId={state.stepId || "device"}
+                    stepId={state?.stepId || "device"}
                     onClose={() => {
                         if (data.onCancel) {
-                            data.onCancel(state.error || new Error("Signature interrupted by user"));
+                            data.onCancel(state?.error || new Error("Signature interrupted by user"));
                         }
                         onClose();
                     }}
