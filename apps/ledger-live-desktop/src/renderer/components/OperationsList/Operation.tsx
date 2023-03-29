@@ -95,12 +95,30 @@ const OperationComponent: FC<any> = ({
     operation.extra.claimingTransactionId = "0x1234567890";
     operation.extra.isClaimed = operation.extra.isClaiming;
     operation.extra.claimedTimestamp = Date.now();
-    dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount }));
+    dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount, onTransactionSigned: onTransactionSigned, onReject: onReject }));
   };
 
+  const onTransactionSigned = () => {
+    console.log('IN')
+    bridge.claimOperation({
+      account,
+      device: device,
+      claimedActivity: operation.extra,
+    })
+      .pipe(
+        filter((e:any) => e?.type === "signed"),
+        concatMap((e:any)=> bridge.broadcast({ account, signedOperation: e.signedOperation }))
+      )
+      .subscribe({
+        next: (e:any) => {
+          console.log('e: ', e);
+        },
+      });
+  };
 
   const onReject = () => {
     // Do something on reject
+    console.log('reject')
   };
   return (
     <OperationRow

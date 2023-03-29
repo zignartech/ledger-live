@@ -21,9 +21,10 @@ interface Props {
     parentAccount: Account | null | undefined;
     transactionData: any;
   };
+  data: any
 }
 
-export const Body = ({ onChangeStepId, setError, stepId, params }: Props) => {
+export const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) => {
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -40,56 +41,21 @@ export const Body = ({ onChangeStepId, setError, stepId, params }: Props) => {
     },
   ];
 
-  const {
-    account,
-    parentAccount,
-    setAccount,
-    status,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    const parentAccount = (params && params.parentAccount) || null;
-    const account = params && params.account;
 
-    const bridge = getAccountBridge(account, parentAccount);
-    const claimedActivity = {
-      claimingTransactionId: "0x1234567890",
-      isClaimed: true,
-      claimedTimestamp: Date.now(),
-    } as any;
-    const claimOperation =
-      bridge.claimOperation &&
-      bridge.claimOperation({
-        account,
-        device: device,
-        claimedActivity: claimedActivity,
-      });
-
-    console.log("claimOperation: ", claimOperation);
-    const transaction = bridge.createTransaction(account);
-    console.log("transaction: ", transaction);
-
-    return { account, parentAccount, transaction };
-  });
+  const stepperProps = {
+    title: t("signmessage.title"),
+    account: data.account,
+    onStepChange: onChangeStepId,
+    stepId,
+    steps,
+    message: data.message,
+    onConfirmationHandler: data.onConfirmationHandler,
+    onFailHandler: data.onFailHandler,
+    onClose: () => dispatch(closeModal("MODAL_SIGN_CLAIMING")),
+  } as any;
 
   return (
-    <Stepper
-      steps={steps}
-      stepId={stepId}
-      onStepChange={{
-        id: undefined,
-        label: undefined,
-        excludeFromBreadcrumb: undefined,
-        component: undefined,
-        footer: undefined,
-        onBack: undefined,
-        backButtonComponent: undefined,
-        noScroll: undefined,
-        hideFooter: undefined,
-      }}
-      onClose={undefined}
-      void={undefined}
-    >
+    <Stepper {...stepperProps}>
       <Track onUnmount event="CloseModalWalletConnectPasteLink" />
     </Stepper>
   );
