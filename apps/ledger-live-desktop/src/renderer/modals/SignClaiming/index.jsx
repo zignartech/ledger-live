@@ -1,4 +1,5 @@
 import Modal from "~/renderer/components/Modal";
+import Body from "./Body";
 
 const ClaimOperationModal = ({
   t,
