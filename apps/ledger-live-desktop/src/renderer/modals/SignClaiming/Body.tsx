@@ -42,6 +42,15 @@ const Body = ({ onChangeStepId, setError, stepId, params }: Props) => {
   console.log(params, 'PARAMS')
   console.log(t, 't')
 
+  const bridge = getAccountBridge(params.account, params.account);
+  const claimActivity = params.operation.extra
+  const result = bridge.claimOperation && bridge.claimOperation({
+    account: params.account,
+    device: device,
+    claimedActivity: claimActivity,
+  });
+
+  console.log(result, 'RESULT')
   const steps = [
     {
       id: "device",
