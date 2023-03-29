@@ -305,13 +305,9 @@ const claimOperation = ({
             claimedActivity
           );
 
-          // if (!device) {
-          //   o.next({
-          //     type: "device-signature-granted",
-          //   });
-          // } else {
-          //   throw new Error("device is locked");
-          // }
+          o.next({
+            type: "device-signature-granted",
+          });
 
           // const recipients: string[] = [transaction.recipient];
           const value = transactionPayload.essence.outputs[0].amount;
