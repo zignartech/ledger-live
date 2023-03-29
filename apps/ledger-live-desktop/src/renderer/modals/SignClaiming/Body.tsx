@@ -24,7 +24,7 @@ interface Props {
   data: any
 }
 
-export const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) => {
+const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) => {
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -60,3 +60,5 @@ export const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) 
     </Stepper>
   );
 };
+
+export default Body;
