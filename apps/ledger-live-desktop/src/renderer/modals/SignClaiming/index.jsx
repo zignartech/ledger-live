@@ -35,7 +35,9 @@ const ClaimOperationModal = ({
             }
             onClose();
           }}
-          onChangeStepId={handleStepChange}
+          onChangeStepId={() => {
+            console.log("onChangeStepId");
+          }}
           params={data || {}}
         />
       )}
