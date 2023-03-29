@@ -41,12 +41,6 @@ const ClaimOperationModal = ({
             console.log("onChangeStepId");
           }}
           params={data || {}}
-          data={{
-            account: account,
-            operation: operation,
-            onConfirmationHandler: onTransactionSigned,
-            onFailHandler: onTransactionError,
-          }}
         />
       )}
     />
