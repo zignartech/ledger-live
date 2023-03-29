@@ -34,66 +34,27 @@ interface Props {
   data: any;
 }
 
-
-function StepConnectDevice({
-  account,
-  operation,
-}: {
-  account: Account,
-  operation: any,
-}) {
-  const bridge = getAccountBridge(account, account);
-  const device = useSelector(getCurrentDevice);
-
-  const claim = () => {
-    return bridge.claimOperation && bridge.claimOperation({
-      account: account,
-      device: device,
-      claimedActivity: {
-        isClaimed: true,
-        claimingTransactionId: operation.id,
-        claimedTimestamp: Date.now(),
-      }
-    })
-  }
-
+const StepDevice = () => {
   return (
-    <div>
-    <DeviceAction
-      action={
-        {
-          useHook: () => {
-            console.log('useHook')
-          },
-          mapResult: (result) => result,
-        }
-      }
-      request={claim}
-    /> 
-    </div>
+    <div></div>
   )
-
 }
 
-
 const Body = ({ onChangeStepId, setError, stepId, params, data }: Props) => {
+  console.log(data, 'IN MODAL')
   const device = useSelector(getCurrentDevice);
+  console.log(device, 'DEVICE')
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  console.log(params, 'PARAMS')
+  console.log(t, 't')
 
-  const openedFromAccount = !!params.account;
   const steps = [
     {
       id: "device",
-      label: t("send.steps.device.title"),
-      component: <StepConnectDevice operation={
-        data.operation as any
-      } account={
-        data.account as Account
-      }  />,
-      onBack: () => {
-        console.log("transitionTo: ", "back");
-      },
+      label: t("signmessage.steps.device"),
+      component: StepDevice,
+      onBack: () => dispatch(closeModal("MODAL_SIGN_CLAIMING")),
     },
   ];
 
