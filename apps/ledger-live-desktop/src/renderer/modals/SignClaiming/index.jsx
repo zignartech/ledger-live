@@ -17,6 +17,7 @@ const ClaimOperationModal = ({
   openedFromAccount,
   openModal,
   useApp,
+  operation,
   ...props
 }) => {
   console.log("ClaimOperationModal", props);
@@ -42,6 +43,7 @@ const ClaimOperationModal = ({
           params={data || {}}
           data={{
             account: account,
+            operation: operation,
             onConfirmationHandler: onTransactionSigned,
             onFailHandler: onTransactionError,
           }}
