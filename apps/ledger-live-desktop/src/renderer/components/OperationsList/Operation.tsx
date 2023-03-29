@@ -92,7 +92,7 @@ const OperationComponent: FC<any> = ({
     console.log('operation: ', operation);
     console.log('transaction: ', t);
     console.log('device: ', device);
-    operation.extra.claimingTransactionId = "0x1234567890";
+    operation.extra.claimingTransactionId = operation.hash;
     operation.extra.isClaimed = operation.extra.isClaiming;
     operation.extra.claimedTimestamp = Date.now();
     dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount, onTransactionSigned: onTransactionSigned, onReject: onReject }));
