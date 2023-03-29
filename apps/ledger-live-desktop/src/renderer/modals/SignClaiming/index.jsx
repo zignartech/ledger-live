@@ -40,3 +40,5 @@ const ClaimOperationModal = ({
         />
     );
 }
+
+export default ClaimOperationModal;

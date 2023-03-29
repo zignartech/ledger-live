@@ -36,7 +36,7 @@ const mapStateToProps = createStructuredSelector({
     }),
 });
 
-const OperationRow: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const OperationRow: any = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
 }))`
@@ -78,11 +78,11 @@ const OperationComponent: FC<any> = ({
   onOperationClick,
 }) => {
   const isOptimistic = operation.blockHeight === null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
-  const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   const bridge = getAccountBridge(account, parentAccount) as any;
   const device = useSelector(getCurrentDevice)
   const onClaim = async () => {
@@ -137,7 +137,7 @@ const OperationComponent: FC<any> = ({
   );
 };
 
-const ConnectedOperationComponent: React$ComponentType<OwnProps> = connect(mapStateToProps)(
+const ConnectedOperationComponent: any = connect(mapStateToProps)(
   OperationComponent,
 );
 
