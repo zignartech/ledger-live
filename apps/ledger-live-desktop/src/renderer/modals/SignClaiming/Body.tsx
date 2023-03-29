@@ -1,15 +1,18 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { AnyAction } from "redux";
 import useBridgeTransaction from "~/../../../libs/ledger-live-common/lib/bridge/useBridgeTransaction";
 import { Account } from "~/../../../libs/ledgerjs/packages/types-live/lib";
+import { closeModal } from "~/renderer/actions/modals";
+import Track from "~/renderer/analytics/Track";
 import { getAccountBridge } from "~/renderer/bridge/proxy";
+import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepConnectDevice from "../Send/steps/GenericStepConnectDevice";
 
 interface Props {
   onChangeStepId: (stepId: number) => void;
-  onClose: () => void;
   setError: (error?: Error) => void;
   stepId: number;
   params: {
@@ -20,7 +23,7 @@ interface Props {
   };
 }
 
-export const Body = ({ onChangeStepId, onClose, setError, stepId, params }: Props) => {
+export const Body = ({ onChangeStepId, setError, stepId, params }: Props) => {
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -32,9 +35,9 @@ export const Body = ({ onChangeStepId, onClose, setError, stepId, params }: Prop
       label: t("send.steps.device.title"),
       component: StepConnectDevice,
       onBack: () => {
-        console.log("transitionTo: ", 'back');
-      }
-    }
+        console.log("transitionTo: ", "back");
+      },
+    },
   ];
 
   const {
@@ -68,4 +71,26 @@ export const Body = ({ onChangeStepId, onClose, setError, stepId, params }: Prop
 
     return { account, parentAccount, transaction };
   });
+
+  return (
+    <Stepper
+      steps={steps}
+      stepId={stepId}
+      onStepChange={{
+        id: undefined,
+        label: undefined,
+        excludeFromBreadcrumb: undefined,
+        component: undefined,
+        footer: undefined,
+        onBack: undefined,
+        backButtonComponent: undefined,
+        noScroll: undefined,
+        hideFooter: undefined,
+      }}
+      onClose={undefined}
+      void={undefined}
+    >
+      <Track onUnmount event="CloseModalWalletConnectPasteLink" />
+    </Stepper>
+  );
 };
