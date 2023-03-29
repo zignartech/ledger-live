@@ -63,11 +63,7 @@ function StepConnectDevice({
       action={
         {
           useHook: () => {
-            const data = useBridgeTransaction();
-            console.log(data)
-            return {
-              ...data,
-            }
+            console.log('useHook')
           },
           mapResult: (result) => result,
         }
