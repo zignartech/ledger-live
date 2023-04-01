@@ -95,6 +95,12 @@ const OperationComponent: FC<any> = ({
     operation.extra.claimingTransactionId = operation.hash;
     operation.extra.isClaimed = operation.extra.isClaiming;
     operation.extra.claimedTimestamp = Date.now();
+    bridge.claimOperation && bridge.claimOperation({
+      account,
+      device: device,
+      claimedActivity: operation.extra,
+    })
+    console.log('IN', bridge.claimOperation)
     dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount, onTransactionSigned: onTransactionSigned, onReject: onReject }));
   };
 

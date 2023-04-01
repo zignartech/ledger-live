@@ -10,7 +10,7 @@ import Breadcrumb from "./Breadcrumb";
 
 export type BasicStepProps = {
   t: TFunction,
-  transitionTo: string => void,
+  transitionTo: (string:string) => void,
 };
 
 export type Step<T, StepProps> = {

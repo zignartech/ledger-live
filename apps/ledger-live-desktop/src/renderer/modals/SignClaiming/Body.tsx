@@ -1,79 +1,64 @@
 // @flow
-
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
-import { Account } from "~/../../../libs/ledgerjs/packages/types-live/lib";
-import { closeModal } from "~/renderer/actions/modals";
+import React, { useCallback, useState } from "react";
+import type { Account } from "@ledgerhq/types-live";
 import Track from "~/renderer/analytics/Track";
+import { Trans, useTranslation } from "react-i18next";
+import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
+import StepSign from "./steps/StepSign";
+import type { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { Trans } from "react-i18next";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import DeviceAction from "~/renderer/components/DeviceAction";
-import StepProgress from "~/renderer/components/StepProgress";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { useBroadcast } from "~/renderer/hooks/useBroadcast";
-import type { AccountLike } from "@ledgerhq/types-live";
-import { command } from "~/renderer/commands";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { getAccountBridge } from "~/renderer/bridge/proxy";
-import useBridgeTransaction from "~/../../../libs/ledger-live-common/lib/bridge/useBridgeTransaction";
-interface Props {
-  onChangeStepId: (stepId: number) => void;
-  setError: (error?: Error) => void;
-  stepId: number;
-  params:any;
-}
+import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
-const StepDevice = () => {
-  return (
-    <div></div>
-  )
-}
+type OwnProps = {
+  onClose: () => void,
+  data: {
+    account: Account,
+    message: MessageData | TypedMessageData,
+    onConfirmationHandler: Function,
+    onFailHandler: Function,
+  },
+};
 
-const Body = ({ onChangeStepId, setError, stepId, params }: Props) => {
-  const device = useSelector(getCurrentDevice);
-  console.log(device, 'DEVICE')
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  console.log(params, 'PARAMS')
-  console.log(t, 't')
+type Props = OwnProps;
 
-  const bridge = getAccountBridge(params.account, params.account);
-  const claimActivity = params.operation.extra
-  const result = bridge.claimOperation && bridge.claimOperation({
-    account: params.account,
-    device: device,
-    claimedActivity: claimActivity,
-  });
-
-  console.log(result, 'RESULT')
-  const steps = [
-    {
-      id: "device",
-      label: t("signmessage.steps.device"),
-      component: StepDevice,
-      onBack: () => dispatch(closeModal("MODAL_SIGN_CLAIMING")),
+const steps: Array<St> = [
+  {
+    id: "summary",
+    label: <Trans i18nKey="signmessage.steps.summary.title" />,
+    component: StepSummary,
+    footer: StepSummaryFooter,
+  },
+  {
+    id: "sign",
+    label: <Trans i18nKey="signmessage.steps.sign.title" />,
+    component: StepSign,
+    onBack: ({ transitionTo }: StepProps) => {
+      transitionTo("summary");
     },
-  ];
+  },
+];
+
+const Body = ({ onClose, data }: Props) => {
+  const { t } = useTranslation();
+  const [stepId, setStepId] = useState("summary");
+
+  const handleStepChange = useCallback(e => setStepId(e.id), [setStepId]);
 
   const stepperProps = {
     title: t("signmessage.title"),
-    account: params.account,
-    onStepChange: onChangeStepId,
+    account: data.account,
+    onStepChange: handleStepChange,
     stepId,
     steps,
-    message: 'test',
-    onConfirmationHandler: params.onTransactionSigned,
-    onFailHandler: params.onReject,
-    onClose: () => dispatch(closeModal("MODAL_SIGN_CLAIMING")),
-  } as any;
+    message: data.message,
+    onConfirmationHandler: data.onConfirmationHandler,
+    onFailHandler: data.onFailHandler,
+    onClose,
+  };
 
   return (
-    <Stepper {...stepperProps}>
+    <Stepper {...stepperProps as any}>
       <Track onUnmount event="CloseModalWalletConnectPasteLink" />
     </Stepper>
   );
