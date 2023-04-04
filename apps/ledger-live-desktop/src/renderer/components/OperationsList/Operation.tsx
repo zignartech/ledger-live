@@ -95,14 +95,50 @@ const OperationComponent: FC<any> = ({
     operation.extra.claimingTransactionId = operation.hash;
     operation.extra.isClaimed = operation.extra.isClaiming;
     operation.extra.claimedTimestamp = Date.now();
-    bridge.claimOperation && bridge.claimOperation({
+    dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount, onTransactionSigned: onTransactionSigned, onReject: onReject, onConfirmationHandler: onConfirmationHandler, message: t("claiming.message"), onFailHandler: onFailHandler, onClose: onClose, device: device }));
+  };
+
+  const onClose = () => {
+    console.log('CLOSE')
+  }
+
+  const onConfirmationHandler = () => {
+    console.log('IN')
+    bridge.claimOperation({
       account,
       device: device,
       claimedActivity: operation.extra,
     })
-    console.log('IN', bridge.claimOperation)
-    dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount, onTransactionSigned: onTransactionSigned, onReject: onReject }));
+      .pipe(
+        filter((e:any) => e?.type === "signed"),
+        concatMap((e:any)=> bridge.broadcast({ account, signedOperation: e.signedOperation }))
+      )
+      .subscribe({
+        next: (e:any) => {
+          console.log('e: ', e);
+        },
+      });
   };
+
+  const onFailHandler = () => {
+    console.log('ERROR')
+    // bridge.claimOperation({
+    //   account,
+    //   device: device,
+    //   claimedActivity: operation.extra,
+    // })
+
+    //   .pipe(
+    //     filter((e:any) => e?.type === "signed"),
+    //     concatMap((e:any)=> bridge.broadcast({ account, signedOperation: e.signedOperation }))
+    //   )
+    //   .subscribe({
+    //     next: (e:any) => {
+    //       console.log('e: ', e);
+    //     },
+    //   });
+  };
+
 
   const onTransactionSigned = () => {
     console.log('IN')
