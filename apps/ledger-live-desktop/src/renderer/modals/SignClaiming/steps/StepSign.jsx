@@ -35,9 +35,9 @@ export default function StepSign({
         dispatch(closeModal("MODAL_SIGN_MESSAGE"));
 
         if (result.error) {
-          onFailHandler(result.error);
-        } else if (result.signature) {
-          onConfirmationHandler(result.signature);
+          onFailHandler();
+        } else {
+          onConfirmationHandler();
         }
       }}
     />

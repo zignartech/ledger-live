@@ -11,7 +11,6 @@ import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/t
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
 type OwnProps = {
-  onClose: () => void,
   data: {
     account: Account,
     message: MessageData | TypedMessageData,
@@ -40,7 +39,7 @@ const steps: Array<St> = [
   },
 ];
 
-const Body = ({ onClose, data }: Props) => {
+const Body = ({ data }: Props) => {
   const { t } = useTranslation();
   const [stepId, setStepId] = useState("summary");
 
@@ -55,7 +54,6 @@ const Body = ({ onClose, data }: Props) => {
     message: data.message,
     onConfirmationHandler: data.onConfirmationHandler,
     onFailHandler: data.onFailHandler,
-    onClose,
   };
 
   return (
