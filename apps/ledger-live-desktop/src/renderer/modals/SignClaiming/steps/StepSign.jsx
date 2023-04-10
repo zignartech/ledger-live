@@ -31,14 +31,9 @@ export default function StepSign({
         account,
         message,
       }}
-      onResult={result => {
-        dispatch(closeModal("MODAL_SIGN_MESSAGE"));
-
-        if (result.error) {
-          onFailHandler();
-        } else {
-          onConfirmationHandler();
-        }
+      onResult={() => {
+        onConfirmationHandler();
+        dispatch(closeModal("MODAL_SIGN_CLAIMING"));
       }}
     />
   );

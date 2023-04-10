@@ -170,7 +170,7 @@ export function StepSummaryFooter({ transitionTo }: StepProps) {
     <Box horizontal justifyContent="flex-end">
       <Button
         onClick={() => {
-          transitionTo("sign");
+          transitionTo("device");
         }}
         primary
       >

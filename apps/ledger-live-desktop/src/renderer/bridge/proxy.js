@@ -155,10 +155,8 @@ export const getAccountBridge = (
     command("AccountClaimOperation")({
       account: toAccountRaw(account),
       claimedActivity,
-      device
-    })
-      .pipe(map(raw => fromOperationRaw(raw, account.id)))
-      .toPromise();
+      device,
+    }).pipe(map(raw => fromOperationRaw(raw, account.id)));
 
   return {
     createTransaction,

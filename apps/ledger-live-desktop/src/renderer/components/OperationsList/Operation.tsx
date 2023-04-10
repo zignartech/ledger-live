@@ -104,20 +104,18 @@ const OperationComponent: FC<any> = ({
 
   const onConfirmationHandler = () => {
     console.log('IN')
-    bridge.claimOperation({
+    const claimOp = bridge.claimOperation && bridge.claimOperation({
       account,
       device: device,
       claimedActivity: operation.extra,
-    })
-      .pipe(
-        filter((e:any) => e?.type === "signed"),
-        concatMap((e:any)=> bridge.broadcast({ account, signedOperation: e.signedOperation }))
-      )
-      .subscribe({
-        next: (e:any) => {
-          console.log('e: ', e);
-        },
-      });
+    }).pipe(
+      filter((e:any) => e?.type === "signed"),
+    ).subscribe({
+      next: (e:any) => {
+        console.log('e: ', e);
+      },
+    });
+    console.log('claimOp: ', claimOp);
   };
 
   const onFailHandler = () => {

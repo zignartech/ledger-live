@@ -29,7 +29,7 @@ const steps: Array<St> = [
     footer: StepSummaryFooter,
   },
   {
-    id: "sign",
+    id: "device",
     label: <Trans i18nKey="signmessage.steps.sign.title" />,
     component: StepSign,
     onBack: ({ transitionTo }: StepProps) => {

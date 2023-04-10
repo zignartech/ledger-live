@@ -5,7 +5,7 @@ import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types"
 import { getNanoDisplayedInfosFor712 } from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
 import { Step } from "~/renderer/components/Stepper";
 
-export type StepId = "summary" | "sign";
+export type StepId = "summary" | "device" | "result";
 
 export type StepProps = {
   t: TFunction;
