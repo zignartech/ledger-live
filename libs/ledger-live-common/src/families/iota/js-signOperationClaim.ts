@@ -294,6 +294,7 @@ const claimOperation = ({
           o.next({
             type: "device-signature-requested",
           });
+          log("building transaction payload...");
 
           // if (!device) {
           //   throw new Error("device not found");

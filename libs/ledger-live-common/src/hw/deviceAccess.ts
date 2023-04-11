@@ -89,6 +89,7 @@ export const withDevice =
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable((o) => {
       const nonce = withDeviceNonce++;
+      log(deviceId, "withDevice", `${nonce}: new job`);
       log("withDevice", `${nonce}: New job: deviceId=${deviceId || "USB"}`);
 
       let unsubscribed;
@@ -119,6 +120,7 @@ export const withDevice =
         .then(() => open(deviceId)) // open the transport
         .then(async (transport) => {
           log("withDevice", `${nonce}: Starting job`);
+          log("withDevice", `${transport}: starting job 2`)
           setAllowAutoDisconnect(transport, deviceId, false);
           if (unsubscribed) {
             // It was unsubscribed prematurely
