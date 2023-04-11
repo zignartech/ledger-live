@@ -156,7 +156,7 @@ export const getAccountBridge = (
       account: toAccountRaw(account),
       claimedActivity,
       device,
-    }).pipe(map(raw => fromOperationRaw(raw, account.id)));
+    }).pipe(map(raw => fromSignOperationEventRaw(raw, account.id)));
 
   return {
     createTransaction,

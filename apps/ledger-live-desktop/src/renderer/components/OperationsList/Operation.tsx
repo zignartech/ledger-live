@@ -9,12 +9,13 @@ import { createStructuredSelector } from "reselect";
 import type { TFunction } from "react-i18next";
 import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import {
+  formatOperation,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-
+import { concat, of, from, Subscription } from "rxjs";
 import ConfirmationCell from "./ConfirmationCell";
 import DateCell from "./DateCell";
 import AccountCell from "./AccountCell";
@@ -28,7 +29,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { concatMap, filter } from "rxjs/operators";
-
+import { log } from "console";
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (state, { account, parentAccount }) =>
     confirmationsNbForCurrencySelector(state, {
@@ -85,6 +87,7 @@ const OperationComponent: FC<any> = ({
   const dispatch = useDispatch();
   const bridge = getAccountBridge(account, parentAccount) as any;
   const device = useSelector(getCurrentDevice)
+  const [signed, setSigned] = React.useState(false);
   const onClaim = async () => {
     console.log("in onClaim");
     console.log('bridge: ', bridge);
@@ -109,10 +112,58 @@ const OperationComponent: FC<any> = ({
       device: device,
       claimedActivity: operation.extra,
     }).pipe(
-      filter((e:any) => e?.type === "signed"),
-    ).subscribe({
+      // FIXME later we will need to treat more events
+      filter((e:any) => e.type === "signed"),
+      concatMap(
+        (
+          e, // later we will have more events
+        ) =>
+          concat(
+            of(e),
+            from(
+              bridge
+                .broadcast({
+                  account: mainAccount,
+                  signedOperation: (e as { signedOperation: any })
+                    .signedOperation,
+                })
+                .then((operation:any) => ({
+                  type: "broadcasted",
+                  operation,
+                })),
+            ),
+          ),
+      ),
+    )
+    .subscribe({
       next: (e:any) => {
         console.log('e: ', e);
+        switch (e.type) {
+          case "signed":
+            log(
+              "transaction-summary",
+              `✔️ has been signed! ${JSON.stringify(
+                (e as { signedOperation?: any }).signedOperation,
+              )}`,
+            );
+            setSigned(true);
+            break;
+
+          case "broadcasted":
+            log(
+              "transaction-summary",
+              `✔️ broadcasted! optimistic operation: ${formatOperation(
+                mainAccount,
+              )(e.operation)}`,
+            );
+            break;
+
+          default:
+        }
+      },
+      error:( e:any) => {
+        let error = e;
+        console.log('error: ', error);
       },
     });
     console.log('claimOp: ', claimOp);

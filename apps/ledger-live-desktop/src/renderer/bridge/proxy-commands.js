@@ -208,10 +208,13 @@ const cmdAccountClaimOperation = (o:{
     claimedActivity: o.claimedActivity,
     device: o.device
   }).pipe(
-    map(toOperationRaw => {
-      console.log("claimOperation", toOperationRaw);
-      return toOperationRaw;
-    })
+    map(toSignOperationEventRaw),
+    tap(e => {
+      console.log("e", e);
+      if (e.type === "signed") {
+        log("transation-summary", "✔️ has been signed!", { signedOperation: e.signOperation });
+      }
+    }),
   );
 };
 
