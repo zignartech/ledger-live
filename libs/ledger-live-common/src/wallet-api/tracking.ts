@@ -70,6 +70,14 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI SignTransaction Success", getEventData(manifest));
     },
 
+    claimOperationSuccess: (manifest: AppManifest) => {
+      track("WalletAPI ClaimOperation Success", getEventData(manifest));
+    },
+
+    claimOperationFail: (manifest: AppManifest) => {
+      track("WalletAPI ClaimOperation Fail", getEventData(manifest));
+    },
+
     // Select account modal open
     requestAccountRequested: (manifest: AppManifest) => {
       track("WalletAPI RequestAccount", getEventData(manifest));

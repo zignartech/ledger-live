@@ -255,6 +255,34 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
         },
       );
 
+      serverRef.current.setHandler("operation.claim", async ({ account, operation }) => {
+        const claimedOperation = await claimOperationLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          operation,
+          (account, parentAccount, operation) =>
+            new Promise((resolve, reject) => {
+              dispatch(
+                openModal("MODAL_SIGN_CLAIMING", {
+                  account,
+                  parentAccount,
+                  operation,
+                  onResult: (signedOperation: SignedOperation) => {
+                    tracking.claimOperationSuccess(manifest);
+                    resolve(signedOperation);
+                  },
+                  onCancel: (error: Error) => {
+                    tracking.claimOperationFail(manifest);
+                    reject(error);
+                  },
+                }),
+              );
+            }),
+        );
+
+        return Buffer.from(claimedOperation.signature);
+      });
+
       serverRef.current.setHandler(
         "transaction.signAndBroadcast",
         async ({ account, transaction, options }) => {
