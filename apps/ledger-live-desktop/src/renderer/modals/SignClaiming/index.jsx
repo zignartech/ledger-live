@@ -29,6 +29,7 @@ const SignMessage = () => {
       render={({ data }) => (
         <Body
           transactionData={data}
+          stepId={"summary"}
         />
       )}
     />
