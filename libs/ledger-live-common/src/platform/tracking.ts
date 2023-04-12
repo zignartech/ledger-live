@@ -66,6 +66,14 @@ export default function trackingWrapper(
       track("Platform SignTransaction Fail", getEventData(manifest));
     },
 
+    platformClaimOperationSuccess: (manifest: LiveAppManifest) => {
+      track("Platform Claim Operation Success", getEventData(manifest));
+    },
+
+    platformClaimOperationFail: (manifest: LiveAppManifest) => {
+      track("Platform Claim Operation Fail", getEventData(manifest));
+    },
+
     // Successfully signed transaction
     platformSignTransactionSuccess: (manifest: LiveAppManifest) => {
       track("Platform SignTransaction Success", getEventData(manifest));

@@ -1,12 +1,9 @@
 // @flow
 
 import React, { useCallback, useState, useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import type { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -16,31 +13,11 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Track from "~/renderer/analytics/Track";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
-import type { St, StepId } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/logger/logger";
-import Text from "~/renderer/components/Text";
 
-type Props = {|
-  stepId: StepId,
-  onChangeStepId: StepId => void,
-  onClose: () => void,
-  params: {
-    canEditFees: boolean,
-    useApp?: string,
-    account: AccountLike,
-    transactionData: PlatformTransaction,
-    onResult: (signedOperation: SignedOperation) => void,
-    onCancel: (reason: any) => void,
-    parentAccount: ?Account,
-    startWithWarning?: boolean,
-    recipient?: string,
-    amount?: BigNumber,
-  },
-  setError: (error?: Error) => void,
-|};
 
-function useSteps(canEditFees = false): St[] {
+function useSteps() {
   const { t } = useTranslation();
 
   return useMemo(() => {
@@ -50,14 +27,6 @@ function useSteps(canEditFees = false): St[] {
         label: t("send.steps.summary.title"),
         component: StepSummary,
         footer: StepSummaryFooter,
-        onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
-        backButtonComponent: canEditFees ? (
-          <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
-            {t("common.adjustFees")}
-          </Text>
-        ) : (
-          undefined
-        ),
       },
       {
         id: "device",
@@ -72,15 +41,13 @@ function useSteps(canEditFees = false): St[] {
 }
 
 
-export default function Body({ onChangeStepId, onClose, setError, stepId, params }: Props) {
+export default function Body({ onChangeStepId, onClose, setError, stepId, transactionData }) {
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const { canEditFees, transactionData } = params;
-
-  const openedFromAccount = !!params.account;
-  const steps = useSteps(canEditFees);
+  console.log(transactionData)
+  const openedFromAccount = !!transactionData.account;
+  const steps = useSteps();
 
   const {
     transaction,
@@ -93,8 +60,8 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const parentAccount = params && params.parentAccount;
-    const account = params && params.account;
+    const parentAccount = transactionData && transactionData.parentAccount;
+    const account = transactionData && transactionData.account;
 
     const bridge = getAccountBridge(account, parentAccount);
     const tx = bridge.createTransaction(account);
@@ -117,11 +84,11 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const handleOpenModal = useCallback((name, data) => dispatch(openModal(name, data)), [dispatch]);
 
   const handleCloseModal = useCallback(() => {
-    dispatch(closeModal("MODAL_SIGN_TRANSACTION"));
+    dispatch(closeModal("MODAL_SIGN_CLAIMING"));
   }, [dispatch]);
 
   const handleChangeAccount = useCallback(
-    (nextAccount: AccountLike, nextParentAccount: ?Account) => {
+    (nextAccount, nextParentAccount) => {
       if (account !== nextAccount) {
         setAccount(nextAccount, nextParentAccount);
       }
@@ -135,7 +102,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   }, [setError]);
 
   const handleTransactionError = useCallback(
-    (error: Error) => {
+    (error) => {
       if (!(error instanceof UserRefusedOnDevice)) {
         logger.critical(error);
       }
@@ -148,11 +115,11 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
   const handleTransactionSigned = useCallback(
-    (signedTransaction: SignedOperation) => {
-      params.onResult(signedTransaction);
+    (signedTransaction) => {
+      transactionData.onResult(signedTransaction);
       handleCloseModal();
     },
-    [handleCloseModal, params],
+    [handleCloseModal, transactionData],
   );
 
   const errorSteps = [];
@@ -169,7 +136,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const stepperProps = {
     title: t("sign.title"),
     stepId,
-    useApp: params.useApp,
+    useApp: transactionData.useApp,
     steps,
     errorSteps,
     device,

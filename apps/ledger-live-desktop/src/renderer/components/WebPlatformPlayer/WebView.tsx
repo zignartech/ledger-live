@@ -15,6 +15,7 @@ import {
   CompleteExchangeRequest,
   CompleteExchangeUiRequest,
   signMessageLogic,
+  claimOperationLogic,
 } from "@ledgerhq/live-common/platform/logic";
 import { serializePlatformSignedTransaction } from "@ledgerhq/live-common/platform/serializers";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -164,6 +165,36 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
     [manifest, dispatch, accounts],
   );
 
+  const claimOperation = useCallback(
+    ({ accountId, operationId }: { accountId: string; operationId: string }) => {
+      return claimOperationLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        operationId,
+        (account, parentAccount, operation) => {
+          return new Promise((resolve, reject) =>
+            dispatch(
+              openModal("MODAL_SIGN_CLAIMING", {
+                account,
+                parentAccount,
+                operation,
+                onResult: (signedOperation: SignedOperation) => {
+                  tracking.platformClaimOperationSuccess(manifest);
+                  resolve(serializePlatformSignedTransaction(signedOperation));
+                },
+                onCancel: (error: Error) => {
+                  tracking.platformClaimOperationFail(manifest);
+                  reject(error);
+                },
+              }),
+            ),
+          );
+        },
+      );
+    },
+    [manifest, dispatch, accounts],
+  );
+
   const broadcastTransaction = useCallback(
     async ({
       accountId,
@@ -289,6 +320,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
       "exchange.start": startExchange,
       "exchange.complete": completeExchange,
       "message.sign": signMessage,
+      "operation.claim": claimOperation,
     }),
     [
       listAccounts,
@@ -300,6 +332,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
       startExchange,
       completeExchange,
       signMessage,
+      claimOperation,
     ],
   );
 

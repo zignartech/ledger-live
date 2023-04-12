@@ -1023,8 +1023,8 @@ importers:
       '@ethersproject/shims': ^5.7.0
       '@hashgraph/sdk': ^2.10.1
       '@iota/crypto.js': 2.0.0-rc.1
-      '@iota/iota.js': 2.0.0-rc.1
-      '@iota/pow-wasm.js': 2.0.0-rc.2
+      '@iota/iota.js': 2.0.0-rc.3
+      '@iota/pow-wasm.js': 2.0.0-rc.3
       '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': ^0.9.16
       '@keplr-wallet/proto-types': ^0.10.4
@@ -1213,8 +1213,8 @@ importers:
       '@ethersproject/shims': 5.7.0
       '@hashgraph/sdk': 2.14.2
       '@iota/crypto.js': 2.0.0-rc.1
-      '@iota/iota.js': 2.0.0-rc.1
-      '@iota/pow-wasm.js': 2.0.0-rc.2
+      '@iota/iota.js': 2.0.0-rc.3
+      '@iota/pow-wasm.js': 2.0.0-rc.3
       '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': 0.9.16
       '@keplr-wallet/proto-types': 0.10.4
@@ -11216,8 +11216,8 @@ packages:
       big-integer: 1.6.51
     dev: false
 
-  /@iota/iota.js/2.0.0-rc.1:
-    resolution: {integrity: sha512-GLMDsOVWvkYagdDz/rAdw58M7CJDW4bSZoFiLQHc790h3Au3Z4pn5FnBq7O258HHgSLpIfNx8RjcNRBwqDxV6Q==}
+  /@iota/iota.js/2.0.0-rc.3:
+    resolution: {integrity: sha512-lrnmFDmI3vWscJAGzka2VOpi+x/kH1xMwvLgPOQ2WlyKOouLv/gmjc6S0K3TYCxKPRgw6DsVYMkFsK4GXXV5BA==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@iota/crypto.js': 2.0.0-rc.1
@@ -11228,8 +11228,8 @@ packages:
       - encoding
     dev: false
 
-  /@iota/pow-wasm.js/2.0.0-rc.2:
-    resolution: {integrity: sha512-UIu/IG54922wukZiIVDEO1LZpov2yNkZL94HW6St0ZH1SCiVqImXrAVQVSYQpIzDGHCPr97x8S7ZMXrGqvoqgg==}
+  /@iota/pow-wasm.js/2.0.0-rc.3:
+    resolution: {integrity: sha512-9Ti67Us87JkN0NHxz2KVXD21wl61geg8K19obha/int6bvrqu2kOSuDCL6KesfW7UERDCy2baIlp++NmCFwz8Q==}
     engines: {node: '>=12.0.0'}
     dependencies:
       '@iota/crypto.js': 2.0.0-rc.1

@@ -3,13 +3,10 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
-import type { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { command } from "~/renderer/commands";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -23,9 +20,6 @@ const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec
 const Result = ({
   signedOperation,
   device,
-}: {
-  signedOperation: ?SignedOperation,
-  device: Device,
 }) => {
   if (!signedOperation) return null;
   return (
@@ -47,17 +41,6 @@ export default function StepConnectDevice({
   setSigned,
   onConfirmationHandler,
   onFailHandler,
-}: {
-  transitionTo: string => void,
-  account: ?AccountLike,
-  parentAccount: ?Account,
-  transaction: ?Transaction,
-  status: TransactionStatus,
-  onTransactionError: Error => void,
-  onOperationBroadcasted: Operation => void,
-  setSigned: boolean => void,
-  onConfirmationHandler?: Function,
-  onFailHandler?: Function,
 }) {
   const dispatch = useDispatch();
   const broadcast = useBroadcast({ account, parentAccount });

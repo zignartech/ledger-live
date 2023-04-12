@@ -132,6 +132,30 @@ export function signTransactionLogic(
   });
 }
 
+export function claimOperationLogic(
+  { manifest, accounts, tracking }: WebPlatformContext,
+  accountId: string,
+  operation: Operation,
+  uiNavigation: (
+    account: AccountLike,
+    parentAccount: Account | undefined,
+    operation: Operation
+  ) => Promise<Operation>
+): Promise<Operation> {
+  tracking.platformClaimOperationRequested(manifest);
+
+  const account = accounts.find((account) => account.id === accountId);
+
+  if (!account) {
+    tracking.platformClaimOperationFail(manifest);
+    return Promise.reject(new Error("Account required"));
+  }
+
+  const parentAccount = getParentAccount(account, accounts);
+
+  return uiNavigation(account, parentAccount, operation);
+}
+
 export function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,

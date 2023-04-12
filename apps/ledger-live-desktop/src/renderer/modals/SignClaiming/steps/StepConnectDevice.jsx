@@ -3,7 +3,6 @@ import React from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./StepSign";
-import type { StepProps } from "../types";
 
 export default function StepConnectDevice({
   account,
@@ -14,7 +13,7 @@ export default function StepConnectDevice({
   useApp,
   onTransactionError,
   onTransactionSigned,
-}: StepProps) {
+}) {
   // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
   const dependencies = [getMainAccount(account, parentAccount)];
   return (

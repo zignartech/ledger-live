@@ -5,7 +5,7 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 
 const SignMessage = () => {
-  const rest: any = {};
+  const rest = {};
 
   // return (
   //   <Modal
@@ -26,9 +26,9 @@ const SignMessage = () => {
       refocusWhenChange={rest.refocusWhenChange}
       onHide={rest.onClose}
       preventBackdropClick
-      render={({ data }:any) => (
+      render={({ data }) => (
         <Body
-          data={data}
+          transactionData={data}
         />
       )}
     />

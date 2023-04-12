@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { NanoDisplayedInfoFor712, StepProps } from "../types";
 import Button from "~/renderer/components/Button";
 import { rgba } from "~/renderer/styles/helpers";
 import IconWallet from "~/renderer/icons/Wallet";
@@ -55,7 +54,7 @@ const AdvancedMessageArea = styled.pre`
   padding: 10px;
 `;
 
-const MessageProperty = memo(({ label, value }: { label: string; value: string | string[] }) => {
+const MessageProperty = memo(({ label, value }) => {
   if (!value) return null;
 
   return (
@@ -82,7 +81,7 @@ const MessageProperty = memo(({ label, value }: { label: string; value: string |
 MessageProperty.displayName = "MessageProperty";
 
 const MessageProperties = memo(
-  (props: { properties: { label: string; value: string | string[] }[] }) => {
+  (props) => {
     const { properties } = props;
     return (
       <Box flex="1">
@@ -95,15 +94,12 @@ const MessageProperties = memo(
 );
 MessageProperties.displayName = "MessageProperties";
 
-export default function StepSummary({ account, message: messageData }: StepProps) {
+export default function StepSummary({ account, message: messageData }) {
   const { t } = useTranslation();
   const [showAdvanced, setShowAdvanced] = useState(false);
   const mainAccount = getMainAccount(account, null);
 
-  const [messageProperties, setMessageProperties] = useState<{
-    message?: string;
-    fields?: NanoDisplayedInfoFor712;
-  }>({});
+  const [messageProperties, setMessageProperties] = useState({});
 
   useEffect(() => {
     getMessageProperties(mainAccount.currency, messageData).then(setMessageProperties);
@@ -165,7 +161,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
   );
 }
 
-export function StepSummaryFooter({ transitionTo }: StepProps) {
+export function StepSummaryFooter({ transitionTo }) {
   return (
     <Box horizontal justifyContent="flex-end">
       <Button
