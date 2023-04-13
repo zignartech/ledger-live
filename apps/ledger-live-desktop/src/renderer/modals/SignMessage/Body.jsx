@@ -1,28 +1,13 @@
 // @flow
 import React, { useCallback, useState } from "react";
-import type { Account } from "@ledgerhq/types-live";
 import Track from "~/renderer/analytics/Track";
 import { Trans, useTranslation } from "react-i18next";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepSign from "./steps/StepSign";
-import type { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
-import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
-type OwnProps = {|
-  onClose: () => void,
-  data: {
-    account: Account,
-    message: MessageData | TypedMessageData,
-    onConfirmationHandler: Function,
-    onFailHandler: Function,
-  },
-|};
 
-type Props = OwnProps;
-
-const steps: Array<St> = [
+const steps = [
   {
     id: "summary",
     label: <Trans i18nKey="signmessage.steps.summary.title" />,
@@ -33,17 +18,17 @@ const steps: Array<St> = [
     id: "sign",
     label: <Trans i18nKey="signmessage.steps.sign.title" />,
     component: StepSign,
-    onBack: ({ transitionTo }: StepProps) => {
+    onBack: ({ transitionTo }) => {
       transitionTo("summary");
     },
   },
 ];
 
-const Body = ({ onClose, data }: Props) => {
+const Body = ({ onClose, data, onChangeStepId }) => {
   const { t } = useTranslation();
   const [stepId, setStepId] = useState("summary");
 
-  const handleStepChange = useCallback(e => setStepId(e.id), [setStepId]);
+  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
 
   const stepperProps = {
     title: t("signmessage.title"),

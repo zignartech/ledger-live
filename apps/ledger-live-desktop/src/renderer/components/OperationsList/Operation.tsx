@@ -31,6 +31,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { concatMap, filter } from "rxjs/operators";
 import { log } from "console";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { createAction } from "redux-actions";
 const mapStateToProps = createStructuredSelector({
   confirmationsNb: (state, { account, parentAccount }) =>
     confirmationsNbForCurrencySelector(state, {
@@ -98,7 +99,6 @@ const OperationComponent: FC<any> = ({
     operation.extra.claimingTransactionId = operation.hash;
     operation.extra.isClaimed = operation.extra.isClaiming;
     operation.extra.claimedTimestamp = Date.now();
-    dispatch(openModal("MODAL_SIGN_CLAIMING", { operation, account, parentAccount, onTransactionSigned: onTransactionSigned, onReject: onReject, onConfirmationHandler: onConfirmationHandler, message: t("claiming.message"), onFailHandler: onFailHandler, onClose: onClose, device: device }));
   };
 
   const onClose = () => {

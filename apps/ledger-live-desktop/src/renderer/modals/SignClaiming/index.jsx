@@ -1,11 +1,16 @@
 // @flow
 
-import React from "react";
+import React, { useState } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 
 const SignMessage = () => {
   const rest = {};
+  const [state, setState] = useState({
+    stepId: "summary",
+    error: undefined,
+  });
+  const handleStepChange = stepId => setState({ ...state, stepId });
 
   // return (
   //   <Modal
@@ -25,12 +30,8 @@ const SignMessage = () => {
       centered
       refocusWhenChange={rest.refocusWhenChange}
       onHide={rest.onClose}
-      preventBackdropClick
       render={({ data }) => (
-        <Body
-          transactionData={data}
-          stepId={"summary"}
-        />
+        <Body transactionData={data} stepId={"device"} onChangeStepId={handleStepChange} />
       )}
     />
   );

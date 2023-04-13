@@ -178,6 +178,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
                 account,
                 parentAccount,
                 operation,
+                stepId: "device",
                 onResult: (signedOperation: SignedOperation) => {
                   tracking.platformClaimOperationSuccess(manifest);
                   resolve(serializePlatformSignedTransaction(signedOperation));

@@ -6,7 +6,7 @@ import Body from "./Body";
 
 const SignMessage = (props) => {
   const [state, setState] = useState({
-    stepId: stepId || "summary",
+    stepId: "device",
     error: undefined,
   });
   const rest = {};
@@ -25,6 +25,7 @@ const SignMessage = (props) => {
           onClose={onClose}
           data={data}
           onChangeStepId={handleStepChange}
+          stepId={state.stepId}
         />
       )}
       {...rest}
