@@ -92,6 +92,7 @@ const OperationComponent = ({
         stepId: "summary",
         transaction: getAccountBridge(mainAccount, mainAccount).createTransaction(mainAccount),
         amount: operation.value,
+        claimedActivity: operation.extra.claimedActivity,
       }),
     );
   };
