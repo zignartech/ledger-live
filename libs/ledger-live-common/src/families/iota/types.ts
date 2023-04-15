@@ -23,6 +23,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   amount: string;
   useAllAmount?: boolean;
   recipient: string;
+  claimedActivity?: ClaimedActivity;
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
