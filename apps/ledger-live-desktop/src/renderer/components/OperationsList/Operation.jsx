@@ -84,6 +84,7 @@ const OperationComponent = ({
   console.log(mainAccount)
   const onClaim = () => {
     console.log("in onClaim");
+    console.log(operation.extra);
     dispatch(
       openModal("MODAL_SEND", {
         parentAccount: mainAccount,
@@ -92,7 +93,7 @@ const OperationComponent = ({
         stepId: "summary",
         transaction: getAccountBridge(mainAccount, mainAccount).createTransaction(mainAccount),
         amount: operation.value,
-        claimedActivity: operation.extra.claimedActivity,
+        claimedActivity: operation.extra,
       }),
     );
   };
