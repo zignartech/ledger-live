@@ -136,6 +136,7 @@ const Body = ({
   accounts,
   updateAccountWithUpdater,
 }: Props) => {
+  console.log("params", params);
   const openedFromAccount = !!params.account;
   const isNFTSend = !!params.isNFTSend;
   const walletConnectProxy = !!params.walletConnectProxy;
@@ -166,8 +167,11 @@ const Body = ({
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
+    console.log(params);
     const parentAccount = params && params.parentAccount;
     const account = (params && params.account) || accounts[0];
+    params.transaction.amount = params.amount || params.transaction.amount || BigNumber(0);
+    params.recipient ? (params.transaction.recipient = params.recipient) : null;
     return { account, parentAccount, transaction: params.transaction };
   });
 

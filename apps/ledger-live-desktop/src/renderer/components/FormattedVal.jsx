@@ -149,7 +149,8 @@ function FormattedVal(props: Props) {
     marketIndicator,
     isNegative,
   });
-
+  console.log("marketColor", marketColor);
+  console.log("text", text)
   return (
     <T {...p} color={color || marketColor} withIcon={withIcon}>
       {withIcon ? (

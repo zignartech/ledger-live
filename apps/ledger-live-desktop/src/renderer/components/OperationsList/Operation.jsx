@@ -80,13 +80,18 @@ const OperationComponent = ({
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const bridge = getAccountBridge(account, parentAccount);
+  console.log("in OperationComponent");
+  console.log(mainAccount)
   const onClaim = () => {
     console.log("in onClaim");
     dispatch(
       openModal("MODAL_SEND", {
-        parentAccount: account,
-        account,
+        parentAccount: mainAccount,
+        account: mainAccount,
+        recipient: mainAccount.freshAddress,
+        stepId: "summary",
+        transaction: getAccountBridge(mainAccount, mainAccount).createTransaction(mainAccount),
+        amount: operation.value,
       }),
     );
   };

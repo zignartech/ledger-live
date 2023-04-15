@@ -19,7 +19,7 @@ const MODAL_LOCKED: { [_: StepId]: boolean } = {
 };
 
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
-  const [stepId, setStep] = useState(() => initialStepId || "device");
+  const [stepId, setStep] = useState(() => initialStepId || "recipient");
   const handleReset = useCallback(() => setStep("recipient"), []);
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId];
@@ -31,14 +31,18 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
       onHide={handleReset}
       onClose={onClose}
       preventBackdropClick={isModalLocked}
-      render={({ onClose, data }) => (
-        <Body
-          stepId={stepId}
-          onClose={onClose}
-          onChangeStepId={handleStepChange}
-          params={data || {}}
-        />
-      )}
+      render={({ onClose, data }) => {
+        console.log("in SendModal", data);
+        return (
+          <Body
+            stepId={stepId}
+            onClose={onClose}
+            onChangeStepId={handleStepChange}
+            onReset={handleReset}
+            params={data || {}}
+          />
+        );
+      }}
     />
   );
 };

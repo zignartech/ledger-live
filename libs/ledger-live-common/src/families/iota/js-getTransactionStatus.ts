@@ -17,11 +17,7 @@ export default async function getTransactionStatus(
 
   if (!transaction.recipient || transaction.recipient.length === 0) {
     errors.recipient = new RecipientRequired("");
-  } else {
-    if (account.freshAddress === transaction.recipient) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("");
-    }
-  }
+  } 
 
   const amount = await calculateAmount({
     transaction,
