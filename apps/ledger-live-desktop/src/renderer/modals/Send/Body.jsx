@@ -47,6 +47,7 @@ type OwnProps = {|
     nftId?: string,
     nftCollection?: string,
     transaction?: Transaction,
+    claimedActivity?: any,
     onConfirmationHandler: Function,
     onFailHandler: Function,
   },
@@ -172,7 +173,7 @@ const Body = ({
     const account = (params && params.account) || accounts[0];
     params.transaction.amount = params.amount || params.transaction.amount || BigNumber(0);
     params.recipient ? (params.transaction.recipient = params.recipient) : null;
-    params.transaction.claimedActivity &&
+    params.claimedActivity &&
       (params.transaction.claimedActivity = params.claimedActivity);
     return { account, parentAccount, transaction: params.transaction };
   });
