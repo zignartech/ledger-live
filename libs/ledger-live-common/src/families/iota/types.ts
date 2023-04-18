@@ -13,17 +13,15 @@ interface ClaimedActivity {
 
 export type Transaction = TransactionCommon & {
   family: "iota";
-  amount: BigNumber;
   useAllAmount?: boolean;
   recipient: string;
-  claimedActivity?: ClaimedActivity;
+  claimedActivity: ClaimedActivity;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "iota";
-  amount: string;
   useAllAmount?: boolean;
   recipient: string;
-  claimedActivity?: ClaimedActivity;
+  claimedActivity: ClaimedActivity;
 };
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

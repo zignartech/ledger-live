@@ -313,6 +313,7 @@ const Body = ({
     onResetMaybeAmount,
     maybeRecipient,
     onResetMaybeRecipient,
+    claimedActivity: params.claimedActivity,
     updateTransaction,
     walletConnectProxy,
     onConfirmationHandler: params.onConfirmationHandler,

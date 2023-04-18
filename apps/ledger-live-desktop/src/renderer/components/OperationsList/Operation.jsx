@@ -82,7 +82,8 @@ const OperationComponent = ({
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   console.log("in OperationComponent");
   console.log(mainAccount)
-  const onClaim = () => {
+  const onClaim = (e) => {
+    e.stopPropagation();
     console.log("in onClaim");
     console.log(operation.extra);
     dispatch(

@@ -146,7 +146,7 @@ const cmdAccountSignOperation = (o: {
 
   log("transaction-summary", `→ FROM ${formatAccount(account, "basic")}`);
   log("transaction-summary", `✔️ transaction ${formatTransaction(transaction, account)}`);
-
+  console.log('transaction', transaction)
   const bridge = bridgeImpl.getAccountBridge(account, null);
   return bridge.signOperation({ account, transaction, deviceId: o.deviceId }).pipe(
     map(toSignOperationEventRaw),

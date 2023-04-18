@@ -139,7 +139,7 @@ export async function inferTransactions(
       transaction.amount = transaction.useAllAmount
         ? new BigNumber(0)
         : inferAmount(account, opts.amount || "0");
-
+      
       // NFT collection and tokenId go by pair
       if (opts.tokenIds && opts.collection) {
         transaction.tokenIds = opts.tokenIds.split(",");
