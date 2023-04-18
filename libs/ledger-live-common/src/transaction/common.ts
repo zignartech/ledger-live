@@ -24,6 +24,10 @@ export const fromTransactionCommonRaw = (
     common.useAllAmount = raw.useAllAmount;
   }
 
+  if ("claimedActivity" in raw) {
+    common.claimedActivity = raw.claimedActivity;
+  }
+
   if ("subAccountId" in raw) {
     common.subAccountId = raw.subAccountId;
   }
@@ -41,6 +45,10 @@ export const toTransactionCommonRaw = (
 
   if ("useAllAmount" in raw) {
     common.useAllAmount = raw.useAllAmount;
+  }
+
+  if ("claimedActivity" in raw) {
+    common.claimedActivity = raw.claimedActivity;
   }
 
   if ("subAccountId" in raw) {

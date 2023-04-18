@@ -16,7 +16,7 @@ export function createTransaction(_account: Account): Transaction {
     amount: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
-    claimedActivity: undefined,
+    claimedActivity: {},
   };
 }
 
