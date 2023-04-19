@@ -1,7 +1,6 @@
 import {
   AmountRequired,
   NotEnoughBalance,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Transaction, TransactionStatus } from "./types";
@@ -17,7 +16,7 @@ export default async function getTransactionStatus(
 
   if (!transaction.recipient || transaction.recipient.length === 0) {
     errors.recipient = new RecipientRequired("");
-  } 
+  }
 
   const amount = await calculateAmount({
     transaction,

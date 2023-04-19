@@ -9,8 +9,6 @@ import { calculateAmount } from "./utils";
  * @returns {Transaction}
  */
 export function createTransaction(_account: Account): Transaction {
-  console.log("createTransaction");
-
   return {
     family: "iota",
     amount: new BigNumber(0),
@@ -29,7 +27,6 @@ export function updateTransaction(
   transaction: Transaction,
   patch: Partial<Transaction>
 ): Transaction {
-  console.log("updateTransaction", transaction)
   return { ...transaction, ...patch };
 }
 
@@ -47,7 +44,6 @@ export async function prepareTransaction(
   account: Account,
   transaction: Transaction
 ): Promise<Transaction> {
-  console.log("prepareTransaction", transaction);
   // explicitly calculate transaction amount to account for `useAllAmount` flag (send max flow)
   // i.e. if `useAllAmount` has been toggled to true, this is where it will update the transaction to reflect that action
   //throw new Error(JSON.stringify(transaction));

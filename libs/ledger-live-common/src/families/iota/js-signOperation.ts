@@ -16,7 +16,6 @@ import {
   UnlockTypes,
   REFERENCE_UNLOCK_TYPE,
   SIGNATURE_UNLOCK_TYPE,
-  IndexerPluginClient,
   SingleNodeClient,
   DEFAULT_PROTOCOL_VERSION,
   IBlock,
@@ -31,7 +30,7 @@ import {
   arrayToHex,
   deviceResponseToUint8Array,
 } from "./utils";
-import { Transaction } from "./types";
+import { ClaimedActivity, Transaction } from "./types";
 
 import {
   Account,
@@ -44,13 +43,11 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { fetchAndWaitForBasicOutputs, getUrl } from "./api";
+import { fetchAllOutputs, getAccountBalance, getUrl } from "./api";
 import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
 } from "./hw-app-iota/constants";
-import { WasmPowProvider } from "@iota/pow-wasm.js";
-// import { NodePowProvider } from "@iota/pow-node.js";
 
 async function buildOptimisticOperation({
   account,
@@ -95,23 +92,24 @@ export async function buildTransactionPayload(
   transport: Transport,
   transaction: Transaction
 ): Promise<ITransactionPayload> {
+  const { freshAddress } = account;
+
+  const { amount, recipient, claimedActivity } = transaction;
+
+  const { isClaiming, claimTransactionId } = claimedActivity as ClaimedActivity;
+
+  let amountToSend: BigNumber = new BigNumber(0);
+  let addressToSend: string;
+
   // Instance client local pow and iota transport
   const iota = new Iota(transport);
   const api_endpoint = getUrl(account.currency.id, "");
-  const client = new SingleNodeClient(api_endpoint, {
-    powProvider: new WasmPowProvider(),
-  });
+  const client = new SingleNodeClient(api_endpoint);
 
   // Fetch node info
   const protocolInfo = await client.protocolInfo();
 
-  // Address owner
-  const genesisWalletAddressBech32 = account.freshAddress;
-
-  // Because we are using the genesis address we must use send advanced as the input address is
-  // not calculated from a Bip32 path, if you were doing a wallet to wallet transfer you can just use send
-  // which calculates all the inputs/outputs for you
-  const indexerPlugin = new IndexerPluginClient(client);
+  const hasExpiration = isClaiming ? true : false;
 
   /*******************************
    ** Prepare Transaction
@@ -119,105 +117,67 @@ export async function buildTransactionPayload(
 
   // 1. Fetch outputId with funds to be used as input
   // Indexer returns outputIds of matching outputs.
-  const genesisAddressOutputs = await fetchAndWaitForBasicOutputs(
-    genesisWalletAddressBech32,
-    indexerPlugin,
-    false
+  const genesisAddressOutputs = await fetchAllOutputs(
+    account.currency.id,
+    freshAddress,
+    hasExpiration
   );
-
-  let totalFunds: BigNumber = new BigNumber(0);
-  const amountToSend: BigNumber = new BigNumber(transaction.amount);
 
   // 2. Prepare Inputs for the transaction
   const inputs: IUTXOInput[] = [];
   const consumingOutputs: OutputTypes[] = [];
+
+  let consumedBalance: BigNumber = new BigNumber(0);
   let hasRemainder = false;
 
-  for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-    // Fetch the output itself
-    const output = await client.output(genesisAddressOutputs.items[i]);
-    if (!output.metadata.isSpent && output.output.type === BASIC_OUTPUT_TYPE)
-      totalFunds = totalFunds.plus((output.output as IBasicOutput).amount);
-  }
-
-  if (amountToSend.isGreaterThan(totalFunds)) {
-    throw new Error("Not enough funds to send");
-  }
-
-  if (totalFunds.isEqualTo(amountToSend)) {
-    for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-      // Fetch the all outputs itself
-      const output = await client.output(genesisAddressOutputs.items[i]);
-      if (
-        !output.metadata.isSpent &&
-        output.output.type === BASIC_OUTPUT_TYPE
-      ) {
-        inputs.push(
-          TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
-        );
-        consumingOutputs.push(output.output);
-      }
-    }
-  }
-
-  let match = false;
-
-  if (totalFunds.isGreaterThan(amountToSend)) {
-    for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
-      // Fetch the output itself match with amount to send
-      const output = await client.output(genesisAddressOutputs.items[i]);
-      if (
-        !output.metadata.isSpent &&
-        output.output.type === BASIC_OUTPUT_TYPE
-      ) {
-        if (
-          new BigNumber((output.output as IBasicOutput).amount).isEqualTo(
-            amountToSend
-          )
-        ) {
-          inputs.push(
-            TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
-          );
-          consumingOutputs.push(output.output);
-          match = true;
-          break;
-        }
-      }
-    }
-  }
-
-  if (totalFunds.isGreaterThan(amountToSend) && !match) {
-    let consumedBalance: BigNumber = new BigNumber(0);
+  if (isClaiming) {
     for (let i = 0; i < genesisAddressOutputs.items.length; i++) {
       const output = await client.output(genesisAddressOutputs.items[i]);
       if (
         !output.metadata.isSpent &&
-        output.output.type === BASIC_OUTPUT_TYPE
+        output.output.type === BASIC_OUTPUT_TYPE &&
+        output.metadata.transactionId === claimTransactionId
       ) {
-        consumedBalance = consumedBalance.plus(
+        amountToSend = amountToSend.plus(
           (output.output as IBasicOutput).amount
         );
         inputs.push(
           TransactionHelper.inputFromOutputId(genesisAddressOutputs.items[i])
         );
         consumingOutputs.push(output.output);
+        break;
+      }
+    }
+    addressToSend = freshAddress;
+  } else {
+    amountToSend.plus(amount);
+    const balance = await getAccountBalance(account.currency.id, freshAddress);
+
+    if (amountToSend.isGreaterThan(balance)) {
+      throw new Error("Not enough funds to send");
+    }
+
+    for (const element of genesisAddressOutputs.items) {
+      const output = await client.output(element);
+      if (
+        !output.metadata.isSpent &&
+        output.output.type === BASIC_OUTPUT_TYPE
+      ) {
+        consumedBalance = consumedBalance.plus(output.output.amount);
+        inputs.push(TransactionHelper.inputFromOutputId(element));
+        consumingOutputs.push(output.output);
         if (consumedBalance.isEqualTo(amountToSend)) {
           break;
         }
         // Fetch the outputs itself with remainder
         if (consumedBalance.isGreaterThan(amountToSend)) {
-          totalFunds = consumedBalance;
           hasRemainder = true;
           break;
         }
       }
     }
+    addressToSend = recipient;
   }
-
-  // Start with finding the outputs. They need to have
-  // a specific structure
-
-  const pubKeyHash = addressToPubKeyHash(transaction.recipient);
 
   // 3. Create outputs
   const outputs: IBasicOutput[] = [];
@@ -230,7 +190,7 @@ export async function buildTransactionPayload(
         type: ADDRESS_UNLOCK_CONDITION_TYPE,
         address: {
           type: ED25519_ADDRESS_TYPE,
-          pubKeyHash: pubKeyHash,
+          pubKeyHash: addressToPubKeyHash(addressToSend),
         },
       },
     ],
@@ -240,14 +200,14 @@ export async function buildTransactionPayload(
   if (hasRemainder) {
     outputs.push({
       type: BASIC_OUTPUT_TYPE,
-      amount: totalFunds.minus(amountToSend).toString(),
+      amount: consumedBalance.minus(amountToSend).toString(),
       nativeTokens: [],
       unlockConditions: [
         {
           type: ADDRESS_UNLOCK_CONDITION_TYPE,
           address: {
             type: ED25519_ADDRESS_TYPE,
-            pubKeyHash: addressToPubKeyHash(account.freshAddress),
+            pubKeyHash: addressToPubKeyHash(freshAddress),
           },
         },
       ],
@@ -268,7 +228,6 @@ export async function buildTransactionPayload(
     inputs,
     inputsCommitment,
     outputs,
-    payload: undefined,
   };
 
   const wsTsxEssence = new WriteStream();

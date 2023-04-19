@@ -16,7 +16,6 @@ import {
   UnlockTypes,
   REFERENCE_UNLOCK_TYPE,
   SIGNATURE_UNLOCK_TYPE,
-  IndexerPluginClient,
   SingleNodeClient,
   DEFAULT_PROTOCOL_VERSION,
   IBlock,
@@ -43,7 +42,7 @@ import { Observable } from "rxjs";
 import BigNumber from "bignumber.js";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { fetchAndWaitForBasicOutputs, getUrl } from "./api";
+import { fetchAllOutputs, getUrl } from "./api";
 import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
@@ -116,7 +115,6 @@ export async function buildTransactionPayload(
   // Because we are using the genesis address we must use send advanced as the input address is
   // not calculated from a Bip32 path, if you were doing a wallet to wallet transfer you can just use send
   // which calculates all the inputs/outputs for you
-  const indexerPlugin = new IndexerPluginClient(client);
 
   /*******************************
    ** Prepare Transaction
@@ -126,9 +124,9 @@ export async function buildTransactionPayload(
 
   // 1. Fetch outputId with funds to be used as input
   // Indexer returns outputIds of matching outputs.
-  const genesisAddressOutputs = await fetchAndWaitForBasicOutputs(
+  const genesisAddressOutputs = await fetchAllOutputs(
+    account.currency.id,
     genesisWalletAddressBech32,
-    indexerPlugin,
     hasExpiration
   );
 

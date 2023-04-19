@@ -5,10 +5,10 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
-interface ClaimedActivity {
-  isClaimed?: boolean;
-  claimingTransactionId?: string;
-  claimedTimestamp?: number;
+export interface ClaimedActivity {
+  isClaiming?: boolean;
+  claimTransactionId?: string;
+  unixTime?: number;
 }
 
 export type Transaction = TransactionCommon & {

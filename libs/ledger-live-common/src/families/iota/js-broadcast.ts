@@ -11,14 +11,14 @@ export default async function broadcast({
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> {
-  console.log('IN BROADCAST COMMON')
   const { signature, operation } = signedOperation;
   const block: IBlock = JSON.parse(signature);
   const API_ENDPOINT = getUrl(account.currency.id, "");
   const client = new SingleNodeClient(API_ENDPOINT, {
     powProvider: new WasmPowProvider(),
   });
-  const messageId = await client.blockSubmit(block, 30, 5);
+  const messageId = await client.blockSubmit(block, 240, 1);
   operation.id = `${messageId}-OUT`;
+  operation.hash = messageId;
   return operation;
 }
