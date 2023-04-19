@@ -81,8 +81,8 @@ const OperationComponent = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   console.log("in OperationComponent");
-  console.log(mainAccount)
-  const onClaim = (e) => {
+  console.log(mainAccount);
+  const onClaim = e => {
     e.stopPropagation();
     console.log("in onClaim");
     console.log(operation.extra);
@@ -122,11 +122,16 @@ const OperationComponent = ({
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
       <div style={{ width: "48px", paddingRight: "4px", paddingLeft: "4px" }}>
         {operation.extra.isClaiming && (
-          <Box gap={"2px"} horizontal={true}>
+          <Box horizontal={true}>
             {new Date(operation.extra.unixTime * 1000) > new Date() ? (
-              <Button small primary onClick={onClaim}>
-                Claim
-              </Button>
+              <Box gap={"2px"} horizontal={true}>
+                <Button small primary onClick={onClaim}>
+                  Claim
+                </Button>
+                <Button small inverted onClick={onReject}>
+                  Reject
+                </Button>
+              </Box>
             ) : (
               <div
                 style={{
@@ -139,9 +144,6 @@ const OperationComponent = ({
                 Expired
               </div>
             )}
-            <Button small inverted onClick={onReject}>
-              Reject
-            </Button>
           </Box>
         )}
       </div>

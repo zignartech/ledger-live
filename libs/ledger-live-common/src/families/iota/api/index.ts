@@ -235,6 +235,7 @@ const txToOp = async (
   );
   op.extra.isClaiming = !!umlockClaim;
   op.extra.unixTime = umlockClaim?.unixTime;
+  op.extra.claimTransactionId = transactionId;
   return op;
 };
 
