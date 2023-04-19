@@ -57,6 +57,7 @@ const Stepper = <T, StepProps>({
   hideCloseButton,
   ...props
 }: Props<T, StepProps>) => {
+  console.log(props)
   const deviceBlocked = useDeviceBlocked();
 
   const transitionTo = useCallback(

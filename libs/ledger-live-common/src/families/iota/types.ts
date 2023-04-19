@@ -6,9 +6,9 @@ import type {
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 interface ClaimedActivity {
-  isClaimed: boolean;
-  claimingTransactionId: string;
-  claimedTimestamp: number;
+  isClaimed?: boolean;
+  claimingTransactionId?: string;
+  claimedTimestamp?: number;
 }
 
 export type Transaction = TransactionCommon & {
