@@ -85,7 +85,7 @@ export default function StepConnectDevice({
                 onOperationBroadcasted(operation);
                 transitionTo("confirmation");
               } else {
-                dispatch(closeModal("MODAL_SEND"));
+                dispatch(closeModal("MODAL_CLAIM"));
                 onConfirmationHandler(operation);
               }
             },
@@ -94,7 +94,7 @@ export default function StepConnectDevice({
                 onTransactionError(error);
                 transitionTo("confirmation");
               } else {
-                dispatch(closeModal("MODAL_SEND"));
+                dispatch(closeModal("MODAL_CLAIM"));
                 onFailHandler(error);
               }
             },
@@ -104,7 +104,7 @@ export default function StepConnectDevice({
             onTransactionError(transactionSignError);
             transitionTo("confirmation");
           } else {
-            dispatch(closeModal("MODAL_SEND"));
+            dispatch(closeModal("MODAL_CLAIM"));
             onFailHandler(transactionSignError);
           }
         }

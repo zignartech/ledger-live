@@ -91,7 +91,7 @@ const OperationComponent = ({
         parentAccount: mainAccount,
         account: mainAccount,
         recipient: mainAccount.freshAddress,
-        stepId: "summary",
+        stepId: "device",
         transaction: getAccountBridge(mainAccount, mainAccount).createTransaction(mainAccount),
         amount: operation.value,
         claimedActivity: operation.extra,

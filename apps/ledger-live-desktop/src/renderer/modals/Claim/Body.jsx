@@ -75,17 +75,10 @@ const createSteps = (disableBacks = []): St[] => [
     footer: StepWarningFooter,
   },
   {
-    id: "summary",
-    label: <Trans i18nKey="send.steps.summary.title" />,
-    component: StepSummary,
-    footer: StepSummaryFooter,
-    onBack: null
-  },
-  {
     id: "device",
     label: <Trans i18nKey="send.steps.device.title" />,
     component: StepConnectDevice,
-    onBack: !disableBacks.includes("device") ? ({ transitionTo }) => transitionTo("summary") : null,
+    onBack: null
   },
   {
     id: "confirmation",
@@ -176,7 +169,7 @@ const Body = ({
   const currencyName = currency ? currency.name : undefined;
 
   const handleCloseModal = useCallback(() => {
-    closeModal("MODAL_SEND");
+    closeModal("MODAL_CLAIM");
   }, [closeModal]);
 
   const handleChangeAccount = useCallback(
