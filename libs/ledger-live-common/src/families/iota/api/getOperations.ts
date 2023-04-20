@@ -5,11 +5,7 @@ import BigNumber from "bignumber.js";
 import { IBasicOutput, IBlock } from "@iota/iota.js";
 import { log } from "@ledgerhq/logs";
 
-const fetchAllTransactions = async (
-  currencyId: string,
-  address: string,
-  latestOperationTimestamp: number
-) => {
+const fetchAllTransactions = async (currencyId: string, address: string) => {
   const transactions: IBlock[] = [];
   const timestamps: number[] = [];
   const transactionIds: string[] = [];
@@ -18,7 +14,7 @@ const fetchAllTransactions = async (
     currencyId,
     address,
     undefined,
-    latestOperationTimestamp
+    undefined
   );
   for (const element of outputs.items) {
     try {
@@ -39,14 +35,13 @@ const fetchAllTransactions = async (
 export const getOperations = async (
   id: string,
   currencyId: string,
-  address: string,
-  latestOperationTimestamp: number
+  address: string
 ): Promise<Operation[]> => {
   const operations: Operation[] = [];
   const { transactions, timestamps, transactionIds } =
-    await fetchAllTransactions(currencyId, address, latestOperationTimestamp);
+    await fetchAllTransactions(currencyId, address);
   for (let i = 0; i < transactions.length; i++) {
-    const operation = await txToOp(
+    const operation: Operation = await txToOp(
       transactions[i],
       currencyId,
       id,
@@ -54,7 +49,7 @@ export const getOperations = async (
       timestamps[i],
       transactionIds[i]
     );
-    if (operation) {
+    if (operation && !operation.value.isZero()) {
       operations.push(operation);
     }
   }
