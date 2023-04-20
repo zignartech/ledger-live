@@ -87,7 +87,7 @@ const OperationComponent = ({
     console.log("in onClaim");
     console.log(operation.extra);
     dispatch(
-      openModal("MODAL_SEND", {
+      openModal("MODAL_CLAIM", {
         parentAccount: mainAccount,
         account: mainAccount,
         recipient: mainAccount.freshAddress,
