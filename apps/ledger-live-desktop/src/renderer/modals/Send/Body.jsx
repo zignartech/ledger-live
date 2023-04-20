@@ -47,7 +47,6 @@ type OwnProps = {|
     nftId?: string,
     nftCollection?: string,
     transaction?: Transaction,
-    claimedActivity?: any,
     onConfirmationHandler: Function,
     onFailHandler: Function,
   },
@@ -137,7 +136,6 @@ const Body = ({
   accounts,
   updateAccountWithUpdater,
 }: Props) => {
-  console.log("params", params);
   const openedFromAccount = !!params.account;
   const isNFTSend = !!params.isNFTSend;
   const walletConnectProxy = !!params.walletConnectProxy;
@@ -168,13 +166,8 @@ const Body = ({
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    console.log('params', params);
     const parentAccount = params && params.parentAccount;
     const account = (params && params.account) || accounts[0];
-    params.transaction.amount = params.amount || params.transaction.amount || BigNumber(0);
-    params.recipient ? (params.transaction.recipient = params.recipient) : null;
-    params.claimedActivity &&
-      (params.transaction.claimedActivity = params.claimedActivity);
     return { account, parentAccount, transaction: params.transaction };
   });
 
@@ -313,7 +306,6 @@ const Body = ({
     onResetMaybeAmount,
     maybeRecipient,
     onResetMaybeRecipient,
-    claimedActivity: params.claimedActivity,
     updateTransaction,
     walletConnectProxy,
     onConfirmationHandler: params.onConfirmationHandler,

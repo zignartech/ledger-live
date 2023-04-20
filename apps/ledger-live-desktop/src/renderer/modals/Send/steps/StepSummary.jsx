@@ -58,12 +58,10 @@ const WARN_FROM_UTXO_COUNT = 50;
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
     const { account, parentAccount, transaction, status, currencyName, isNFTSend } = this.props;
-    console.log("in StepSummary", this.props);
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount) || account;
+    const mainAccount = getMainAccount(account, parentAccount);
     if (!mainAccount || !transaction) return null;
     const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
-    console.log("in StepSummary", status);
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
     const feesUnit = getAccountUnit(mainAccount);

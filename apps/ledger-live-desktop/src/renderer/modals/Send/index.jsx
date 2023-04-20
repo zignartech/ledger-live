@@ -31,18 +31,14 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
       onHide={handleReset}
       onClose={onClose}
       preventBackdropClick={isModalLocked}
-      render={({ onClose, data }) => {
-        console.log("in SendModal", data);
-        return (
-          <Body
-            stepId={stepId}
-            onClose={onClose}
-            onChangeStepId={handleStepChange}
-            onReset={handleReset}
-            params={data || {}}
-          />
-        );
-      }}
+      render={({ onClose, data }) => (
+        <Body
+          stepId={stepId}
+          onClose={onClose}
+          onChangeStepId={handleStepChange}
+          params={data || {}}
+        />
+      )}
     />
   );
 };
