@@ -30,7 +30,7 @@ import {
   arrayToHex,
   deviceResponseToUint8Array,
 } from "./utils";
-import { ClaimedActivity, Transaction } from "./types";
+import { Transaction } from "./types";
 
 import {
   Account,
@@ -96,7 +96,8 @@ export async function buildTransactionPayload(
 
   const { amount, recipient, claimedActivity } = transaction;
 
-  const { isClaiming, claimTransactionId } = claimedActivity as ClaimedActivity;
+  const isClaiming = claimedActivity?.iscClaiming ?? false;
+  const claimTransactionId = claimedActivity?.transactionId ?? "";
 
   let amountToSend: BigNumber = new BigNumber(0);
   let addressToSend: string;
@@ -150,7 +151,7 @@ export async function buildTransactionPayload(
     }
     addressToSend = freshAddress;
   } else {
-    amountToSend.plus(amount);
+    amountToSend = amountToSend.plus(amount);
     const balance = await getAccountBalance(account.currency.id, freshAddress);
 
     if (amountToSend.isGreaterThan(balance)) {
