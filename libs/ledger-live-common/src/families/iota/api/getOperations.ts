@@ -53,6 +53,7 @@ export const getOperations = async (
       operations.push(operation);
     }
   }
+  console.log("operations123", operations);
   return operations;
 };
 

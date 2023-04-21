@@ -30,7 +30,7 @@ import {
   arrayToHex,
   deviceResponseToUint8Array,
 } from "./utils";
-import { Transaction } from "./types";
+import { ClaimedActivity, Transaction } from "./types";
 
 import {
   Account,
@@ -96,8 +96,7 @@ export async function buildTransactionPayload(
 
   const { amount, recipient, claimedActivity } = transaction;
 
-  const isClaiming = claimedActivity?.iscClaiming ?? false;
-  const claimTransactionId = claimedActivity?.transactionId ?? "";
+  const { isClaiming, claimTransactionId } = claimedActivity as ClaimedActivity;
 
   let amountToSend: BigNumber = new BigNumber(0);
   let addressToSend: string;
