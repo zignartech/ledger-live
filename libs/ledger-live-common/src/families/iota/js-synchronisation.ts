@@ -19,9 +19,17 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   // get the current account balance state depending your api implementation
   const accountBalance = await getAccountBalance(currency.id, address);
+  const latestOperationTimestamp = oldOperations[0]
+    ? Math.floor(oldOperations[0].date.getTime() / 1000)
+    : 0;
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, currency.id, address);
+  const newOperations = await getOperations(
+    accountId,
+    currency.id,
+    address,
+    latestOperationTimestamp
+  );
   const operations = mergeOps(oldOperations, newOperations);
 
   const shape = {
