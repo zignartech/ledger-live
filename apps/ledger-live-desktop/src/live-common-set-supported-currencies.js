@@ -54,4 +54,6 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "shimmer",
+  "iota"
 ]);
