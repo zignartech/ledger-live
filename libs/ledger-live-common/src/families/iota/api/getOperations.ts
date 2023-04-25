@@ -13,6 +13,7 @@ const fetchAllTransactions = async (
   const transactions: IBlock[] = [];
   const timestamps: number[] = [];
   const transactionIds: string[] = [];
+  const outputIndexIds: number[] = [];
 
   const outputs = await fetchAllOutputs(
     currencyId,
@@ -24,16 +25,18 @@ const fetchAllTransactions = async (
     try {
       const output = await fetchSingleOutput(currencyId, element);
       const transactionId = output.metadata.transactionId;
+      const outputIndex = output.metadata.outputIndex;
       transactions.push(
         await fetchSingleTransaction(currencyId, transactionId)
       );
       timestamps.push(output.metadata.milestoneTimestampBooked);
       transactionIds.push(transactionId);
+      outputIndexIds.push(outputIndex);
     } catch (error) {
       log("No transactions found");
     }
   }
-  return { transactions, timestamps, transactionIds };
+  return { transactions, timestamps, transactionIds, outputIndexIds };
 };
 
 export const getOperations = async (
@@ -43,7 +46,7 @@ export const getOperations = async (
   latestOperationTimestamp: number
 ): Promise<Operation[]> => {
   const operations: Operation[] = [];
-  const { transactions, timestamps, transactionIds } =
+  const { transactions, timestamps, transactionIds, outputIndexIds } =
     await fetchAllTransactions(currencyId, address, latestOperationTimestamp);
   for (let i = 0; i < transactions.length; i++) {
     const operation: Operation = await txToOp(
@@ -52,9 +55,10 @@ export const getOperations = async (
       id,
       address,
       timestamps[i],
-      transactionIds[i]
+      transactionIds[i],
+      outputIndexIds[i]
     );
-    if (operation) {
+    if (operation && !operation.value.isZero()) {
       operations.push(operation);
     }
   }
@@ -67,7 +71,8 @@ const txToOp = async (
   id: string,
   address: string,
   timestamp: number,
-  transactionId: string
+  transactionId: string,
+  outputIndex: number
 ): Promise<any> => {
   const data = transaction ? transaction : null;
   if (!data || !data.payload || data.payload?.type != 6) {
@@ -167,6 +172,7 @@ const txToOp = async (
   op.extra.isClaiming = !!umlockClaim;
   op.extra.unixTime = umlockClaim?.unixTime;
   op.extra.claimTransactionId = transactionId;
+  op.extra.outputIndex = outputIndex;
 
   return op;
 };
