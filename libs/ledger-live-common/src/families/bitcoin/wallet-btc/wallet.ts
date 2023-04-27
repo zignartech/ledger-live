@@ -132,7 +132,7 @@ class BitcoinLikeWallet {
     let usableUtxoCount = 0;
     utxos.forEach((utxo) => {
       if (
-        !excludeUTXOs.find(
+        !excludeUTXOs?.find(
           (excludeUtxo) =>
             excludeUtxo.hash === utxo.output_hash &&
             excludeUtxo.outputIndex === utxo.output_index
@@ -149,7 +149,7 @@ class BitcoinLikeWallet {
       }
     });
 
-    const outputScripts = outputAddresses.map((addr) =>
+    const outputScripts = outputAddresses?.map((addr) =>
       account.xpub.crypto.toOutputScript(addr)
     );
 
