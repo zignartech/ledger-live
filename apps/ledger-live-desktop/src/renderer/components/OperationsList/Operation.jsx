@@ -120,17 +120,50 @@ const OperationComponent = ({
       <DateCell text={text} operation={operation} t={t} />
       {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
-      <div style={{ width: "48px", paddingRight: "4px", paddingLeft: "4px" }}>
+      <div style={{ width: "112px", paddingRight: "4px", paddingLeft: "4px" }}>
         {operation.extra.isClaiming && (
           <Box horizontal={true}>
             {new Date(operation.extra.unixTime * 1000) > new Date() ? (
-              <Box gap={"2px"} horizontal={true}>
-                <Button small primary onClick={onClaim}>
-                  Claim
-                </Button>
-                <Button small inverted onClick={onReject}>
-                  Reject
-                </Button>
+              <Box horizontal={true}>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: "8px",
+                  }}
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    style={{ marginRight: "4px" }}
+                  >
+                    <path
+                      d="M6 0C2.69 0 0 2.69 0 6C0 9.31 2.69 12 6 12C9.31 12 12 9.31 12 6C12 2.69 9.31 0 6 0ZM6 11C3.24 11 1 8.76 1 6C1 3.24 3.24 1 6 1C8.76 1 11 3.24 11 6C11 8.76 8.76 11 6 11Z"
+                      fill="#999999"
+                    />
+                    <path
+                      d="M6 2C5.45 2 5 2.45 5 3V6.5C5 6.78 5.22 7 5.5 7C5.78 7 6 6.78 6 6.5V3C6 2.45 5.55 2 5 2Z"
+                      fill="#999999"
+                    />
+                    <path
+                      d="M6 10C5.45 10 5 10.45 5 11C5 11.55 5.45 12 6 12C6.55 12 7 11.55 7 11C7 10.45 6.55 10 6 10Z"
+                      fill="#999999"
+                    />
+                  </svg>
+                  {Math.floor((new Date(operation.extra.unixTime * 1000) - new Date()) / 60000)} min
+                </div>
+                <Box gap={"2px"} horizontal={true}>
+                  <Button small primary onClick={onClaim}>
+                    Claim
+                  </Button>
+                  <Button small inverted onClick={onReject}>
+                    Reject
+                  </Button>
+                </Box>
               </Box>
             ) : (
               <div
