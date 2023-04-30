@@ -1022,9 +1022,9 @@ importers:
       '@ethersproject/shims': ^5.7.0
       '@hashgraph/sdk': ^2.10.1
       '@iota/crypto.js': 2.0.0-rc.2
-      '@iota/iota.js': 2.0.0-rc.4
+      '@iota/iota.js': 2.0.0-rc.3
       '@iota/pow-wasm.js': 2.0.0-rc.3
-      '@iota/util.js': 2.0.0-rc.2
+      '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': ^0.9.16
       '@keplr-wallet/proto-types': ^0.10.4
       '@ledgerhq/compressjs': github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
@@ -1213,9 +1213,9 @@ importers:
       '@ethersproject/shims': 5.7.0
       '@hashgraph/sdk': 2.14.2
       '@iota/crypto.js': 2.0.0-rc.2
-      '@iota/iota.js': 2.0.0-rc.4
+      '@iota/iota.js': 2.0.0-rc.3
       '@iota/pow-wasm.js': 2.0.0-rc.3
-      '@iota/util.js': 2.0.0-rc.2
+      '@iota/util.js': 2.0.0-rc.1
       '@keplr-wallet/cosmos': 0.9.16
       '@keplr-wallet/proto-types': 0.10.4
       '@ledgerhq/compressjs': github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
@@ -11225,12 +11225,12 @@ packages:
       big-integer: 1.6.51
     dev: false
 
-  /@iota/iota.js/2.0.0-rc.4:
-    resolution: {integrity: sha512-fXlM6Q/jSQG0dEXULugbgE9ZT9R5nN3G8oz71Ti6vhbxL1lbQN4M/IzddGg+cn2NfKezNcdMjs8xBbOOBJveCQ==}
+  /@iota/iota.js/2.0.0-rc.3:
+    resolution: {integrity: sha512-lrnmFDmI3vWscJAGzka2VOpi+x/kH1xMwvLgPOQ2WlyKOouLv/gmjc6S0K3TYCxKPRgw6DsVYMkFsK4GXXV5BA==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@iota/crypto.js': 2.0.0-rc.2
-      '@iota/util.js': 2.0.0-rc.2
+      '@iota/crypto.js': 2.0.0-rc.1
+      '@iota/util.js': 2.0.0-rc.1
       big-integer: 1.6.51
       node-fetch: 2.6.7
     transitivePeerDependencies:
