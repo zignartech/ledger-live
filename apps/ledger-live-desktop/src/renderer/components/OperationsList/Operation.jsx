@@ -102,6 +102,26 @@ const OperationComponent = ({
   const onReject = () => {
     // Do something on reject
   };
+
+  function getTimeRemaining(unixTime) {
+    const now = new Date();
+    const targetDate = new Date(unixTime * 1000);
+    const difference = targetDate - now;
+
+    if (difference <= 0) {
+      return "The target time has already passed.";
+    }
+
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+    return `${days > 0 ? days + " days " : ""}${hours > 0 ? hours + " hours " : ""}${
+      minutes > 0 ? minutes + " minutes " : ""
+    }${seconds > 0 ? seconds + " seconds " : ""}`;
+  }
+
   return (
     <OperationRow
       className="operation-row"
@@ -120,7 +140,7 @@ const OperationComponent = ({
       <DateCell text={text} operation={operation} t={t} />
       {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
-      <div style={{ width: "112px", paddingRight: "4px", paddingLeft: "4px" }}>
+      <div style={{ width: "120px", paddingRight: "4px", paddingLeft: "4px" }}>
         {operation.extra.isClaiming && (
           <Box horizontal={true}>
             {new Date(operation.extra.unixTime * 1000) > new Date() ? (
@@ -154,7 +174,11 @@ const OperationComponent = ({
                       fill="#999999"
                     />
                   </svg>
-                  {Math.floor((new Date(operation.extra.unixTime * 1000) - new Date()) / 60000)} min
+                  {
+                    <span style={{ color: "#999999" }}>
+                      {getTimeRemaining(operation.extra.unixTime)}
+                    </span>
+                  }
                 </div>
                 <Box gap={"2px"} horizontal={true}>
                   <Button small primary onClick={onClaim}>
