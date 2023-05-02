@@ -1,9 +1,14 @@
 import { Operation } from "@ledgerhq/types-live";
-import { fetchAllOutputs, fetchSingleOutput, fetchSingleTransaction } from ".";
-import { decimalToHex, uint8ArrayToAddress } from "../utils";
+import {
+  fetchAllOutputs,
+  fetchSingleOutput,
+  fetchSingleTransaction,
+  getUrl,
+} from ".";
 import BigNumber from "bignumber.js";
-import { IBasicOutput, IBlock } from "@iota/iota.js";
+import { IBlock, SingleNodeClient } from "@iota/iota.js";
 import { log } from "@ledgerhq/logs";
+import { TransactionsHelper } from "./helpers";
 
 const fetchAllTransactions = async (
   currencyId: string,
@@ -48,8 +53,13 @@ export const getOperations = async (
   const operations: Operation[] = [];
   const { transactions, timestamps, transactionIds, outputIndexIds } =
     await fetchAllTransactions(currencyId, address, latestOperationTimestamp);
+
+  const apiEndpoint = getUrl(currencyId, "");
+  const client = new SingleNodeClient(apiEndpoint);
+
   for (let i = 0; i < transactions.length; i++) {
     const operation: Operation = await txToOp(
+      client,
       transactions[i],
       currencyId,
       id,
@@ -66,6 +76,7 @@ export const getOperations = async (
 };
 
 const txToOp = async (
+  client: SingleNodeClient,
   transaction: IBlock,
   currencyId: string,
   id: string,
@@ -81,71 +92,35 @@ const txToOp = async (
 
   // define the outputs and inputs of the transaction / block
   const payload = data.payload;
-  const essence = payload.essence;
-  const outputs = essence.outputs;
-  const inputs = essence.inputs;
-
-  const recipients: string[] = [];
-  const senders: string[] = [];
-  let value = 0;
   let type: "IN" | "OUT" = "IN"; // default is IN. If the address is found in an input, it will be changed to "OUT"
+  let senders: any[] = [];
+  let recipients: any[] = [];
 
-  // senders logic
-  for (const input of inputs) {
-    const transactionId = input.transactionId;
-    const outputIndex = decimalToHex(input.transactionOutputIndex);
-    const { output } = await fetchSingleOutput(
-      currencyId,
-      transactionId + outputIndex
-    );
-    const basicOuput = output as IBasicOutput;
+  const { inputs, outputs, transferTotal } =
+    await TransactionsHelper.getInputsAndOutputs(transaction, "smr", client);
 
-    const senderUnlockCondition: any = basicOuput.unlockConditions[0];
-    const senderPubKeyHash: any = senderUnlockCondition.address.pubKeyHash;
-    const senderUint8Array = Uint8Array.from(
-      senderPubKeyHash
-        .match(/.{1,2}/g) // magic
-        .map((byte: string) => parseInt(byte, 16))
-    );
-    // the address of the sender
-    const sender = uint8ArrayToAddress(currencyId, senderUint8Array);
-    senders.push(sender);
-    if (sender == address) type = "OUT";
+  const isInput = inputs.some((input) => input.address.bech32 === address);
+  const IsOutput = outputs.some(
+    (output) =>
+      output.address?.bech32 === address && output.isRemainder === false
+  );
+
+  if (isInput) {
+    type = "OUT";
+    recipients = inputs.map((input) => input.address.bech32);
+    senders = outputs.map((output) => output.address?.bech32);
   }
-
-  // receivers logic
-  for (const output of outputs) {
-    // if (outputCheck(output)) {
-    const basicOuput = output as IBasicOutput;
-
-    const recipientUnlockCondition: any = basicOuput.unlockConditions[0];
-    const recipientPubKeyHash: any =
-      recipientUnlockCondition.address.pubKeyHash;
-    const recipientUint8Array = Uint8Array.from(
-      recipientPubKeyHash
-        .match(/.{1,2}/g) // magic
-        .map((byte: string) => parseInt(byte, 16))
-    );
-    // the address of the recipient
-    const recipient = uint8ArrayToAddress(currencyId, recipientUint8Array);
-
-    // In case the transaction is incoming:
-    // add to the value all amount coming into the address.
-    // If the transaction is outgoing:
-    // add to the value all amount going to other addresses.
-    const amount: number = +output.amount;
-    if (type == "IN" && recipient == address) value += amount;
-    else if (type == "OUT" && recipient != address) value += amount; // otherwise, it means that it's a remainder and doesn't count into the value
-
-    recipients.push(recipient);
-    // }
+  if (IsOutput) {
+    type = "IN";
+    senders = inputs.map((input) => input.address.bech32);
+    recipients = outputs.map((output) => output.address?.bech32);
   }
 
   const op: Operation = {
     id: `${transactionId}-${type}`,
     hash: transactionId,
     type,
-    value: new BigNumber(value),
+    value: new BigNumber(transferTotal),
     fee: new BigNumber(0),
     blockHash: "",
     blockHeight: 10, // so it's considered a confirmed transaction
@@ -189,14 +164,3 @@ interface OutputWithUnlockConditions {
     unixTime?: number;
   }[];
 }
-
-// Only outputs that have one o
-// const outputCheck = (output: any): boolean => {
-//   if (
-//     output.type == 3 && // it's a BasicOutput
-//     output.unlockConditions.length == 1 && // no other unlockConditions
-//     output.unlockConditions[0].type == 0 // it's an AddressUnlockCondition
-//   ) {
-//     return true;
-//   } else return false;
-// };
