@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, useState } from "react";
 import { connect, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
@@ -80,6 +80,7 @@ const OperationComponent = ({
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
+  const [isRejected, setIsRejected] = useState(false);
   console.log("in OperationComponent");
   console.log(mainAccount);
   const onClaim = e => {
@@ -97,10 +98,6 @@ const OperationComponent = ({
         claimedActivity: operation.extra,
       }),
     );
-  };
-
-  const onReject = () => {
-    // Do something on reject
   };
 
   function getTimeRemaining(unixTime) {
@@ -141,7 +138,7 @@ const OperationComponent = ({
       {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
       <div style={{ width: "120px", paddingRight: "4px", paddingLeft: "4px" }}>
-        {operation.extra.isClaiming && (
+        {operation.extra.isClaiming && !isRejected && (
           <Box horizontal={true}>
             {new Date(operation.extra.unixTime * 1000) > new Date() ? (
               <Box horizontal={true}>
@@ -184,7 +181,10 @@ const OperationComponent = ({
                   <Button small primary onClick={onClaim}>
                     Claim
                   </Button>
-                  <Button small inverted onClick={onReject}>
+                  <Button small inverted onClick={(e)=>{
+                    e.stopPropagation();
+                    setIsRejected(true);
+                  }}>
                     Reject
                   </Button>
                 </Box>
