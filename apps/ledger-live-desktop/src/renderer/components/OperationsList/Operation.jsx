@@ -117,9 +117,6 @@ const OperationComponent = ({
     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-    // return `${days > 0 ? days + " d" : ""}${hours > 0 ? hours + " h" : ""}${
-    //   days < 1 && minutes > 0 ? minutes + " minutes " : ""
-    // }${minutes < 1 && seconds > 0 ? seconds + " seconds " : ""}`;
     return `${days > 0 ? days + " d" : ""}${hours > 0 ? hours + " h" : ""} ${
       days < 1 && minutes > 0 ? minutes + " m" : ""
     }`;
