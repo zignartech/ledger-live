@@ -117,9 +117,12 @@ const OperationComponent = ({
     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-    return `${days > 0 ? days + " days " : ""}${hours > 0 ? hours + " hours " : ""}${
-      minutes > 0 ? minutes + " minutes " : ""
-    }${seconds > 0 ? seconds + " seconds " : ""}`;
+    // return `${days > 0 ? days + " d" : ""}${hours > 0 ? hours + " h" : ""}${
+    //   days < 1 && minutes > 0 ? minutes + " minutes " : ""
+    // }${minutes < 1 && seconds > 0 ? seconds + " seconds " : ""}`;
+    return `${days > 0 ? days + " d" : ""}${hours > 0 ? hours + " h" : ""} ${
+      days < 1 && minutes > 0 ? minutes + " m" : ""
+    }`;
   }
 
   return (
@@ -127,7 +130,11 @@ const OperationComponent = ({
       className="operation-row"
       isOptimistic={isOptimistic}
       onClick={() => {
-        onOperationClick(operation, account, parentAccount);
+        const newOperation = {
+          ...operation,
+          extra: {}
+        }
+        onOperationClick(newOperation, account, parentAccount);
       }}
     >
       <ConfirmationCell
