@@ -99,36 +99,16 @@ export function StepConfirmationFooter({
     : null;
   return (
     <>
-      {concernedOperation ? (
-        // FIXME make a standalone component!
-        <Button
-          ml={2}
-          id={"send-confirmation-opc-button"}
-          event="Send Flow Step 4 View OpD Clicked"
-          onClick={() => {
-            closeModal();
-            if (account && concernedOperation) {
-              setDrawer(OperationDetails, {
-                operationId: concernedOperation.id,
-                accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
-              });
-            }
-          }}
-          primary
-        >
-          {t("send.steps.confirmation.success.cta")}
-        </Button>
-      ) : error ? (
+      {error && (
         <RetryButton
           ml={2}
           primary
           onClick={() => {
             onRetry();
-            transitionTo("summary");
+            transitionTo("device");
           }}
         />
-      ) : null}
+      )}
     </>
   );
 }
