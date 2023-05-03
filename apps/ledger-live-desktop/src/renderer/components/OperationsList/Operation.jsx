@@ -127,11 +127,7 @@ const OperationComponent = ({
       className="operation-row"
       isOptimistic={isOptimistic}
       onClick={() => {
-        const newOperation = {
-          ...operation,
-          extra: {}
-        }
-        onOperationClick(newOperation, account, parentAccount);
+        onOperationClick(operation, account, parentAccount);
       }}
     >
       <ConfirmationCell
