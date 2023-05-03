@@ -47,7 +47,7 @@ import {
   ED25519_PUBLIC_KEY_LENGTH,
   ED25519_SIGNATURE_LENGTH,
 } from "./hw-app-iota/constants";
-import { WasmPowProvider } from "@iota/pow-wasm.js";
+// import { WasmPowProvider } from "@iota/pow-wasm.js";
 // import { NodePowProvider } from "@iota/pow-node.js";
 
 interface ClaimedActivity {
@@ -102,9 +102,7 @@ export async function buildTransactionPayload(
   // Instance client local pow and iota transport
   const iota = new Iota(transport);
   const api_endpoint = getUrl(account.currency.id, "");
-  const client = new SingleNodeClient(api_endpoint, {
-    powProvider: new WasmPowProvider(),
-  });
+  const client = new SingleNodeClient(api_endpoint);
 
   // Fetch node info
   const protocolInfo = await client.protocolInfo();

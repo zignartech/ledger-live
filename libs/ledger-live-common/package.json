@@ -142,7 +142,7 @@
     "@hashgraph/sdk": "^2.10.1",
     "@iota/crypto.js": "2.0.0-rc.2",
     "@iota/iota.js": "2.0.0-rc.3",
-    "@iota/pow-wasm.js": "2.0.0-rc.3",
+    "@iota/pow-neon.js": "2.0.0-rc.3",
     "@iota/util.js": "2.0.0-rc.1",
     "big-integer": "1.6.51",
     "struct": "^0.0.12",
