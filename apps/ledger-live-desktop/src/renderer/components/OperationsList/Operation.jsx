@@ -159,7 +159,7 @@ const OperationComponent = ({
                   style={{
                     fontSize: "12px",
                     display: "flex",
-                    justifyContent: "center",
+                    justifyContent: "start",
                     alignItems: "center",
                     marginRight: "8px",
                     width: "100px",
