@@ -128,6 +128,8 @@ const OperationComponent = ({
     if (minutes > 0) {
       timeRemaining += `${minutes} m`;
     }
+
+    return timeRemaining;
   }
 
   return (
@@ -148,7 +150,7 @@ const OperationComponent = ({
       <DateCell text={text} operation={operation} t={t} />
       {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
-      <div style={{ width: "200px", paddingRight: "4px", paddingLeft: "4px" }}>
+      <div style={{ width: "220px", paddingRight: "4px", paddingLeft: "4px" }}>
         {operation.extra.isClaiming && !isRejected && (
           <Box horizontal={true}>
             {new Date(operation.extra.unixTime * 1000) > new Date() ? (
