@@ -106,7 +106,7 @@ const OperationComponent = ({
     const difference = targetDate - now;
 
     if (difference <= 0) {
-      return "The target time has already passed.";
+      return "";
     }
 
     const years = Math.floor(difference / (1000 * 60 * 60 * 24 * 365));
@@ -162,6 +162,7 @@ const OperationComponent = ({
                     justifyContent: "center",
                     alignItems: "center",
                     marginRight: "8px",
+                    width: "100px",
                   }}
                 >
                   <svg
