@@ -117,16 +117,16 @@ const OperationComponent = ({
     let timeRemaining = "";
 
     if (years > 0) {
-      timeRemaining += `${years} y`;
+      timeRemaining += `${years}y `;
     }
     if (days > 0) {
-      timeRemaining += `${days} d`;
+      timeRemaining += `${days}d `;
     }
     if (hours > 0) {
-      timeRemaining += `${hours} h`;
+      timeRemaining += `${hours}h `;
     }
     if (minutes > 0) {
-      timeRemaining += `${minutes} m`;
+      timeRemaining += `${minutes}m `;
     }
 
     return timeRemaining;
