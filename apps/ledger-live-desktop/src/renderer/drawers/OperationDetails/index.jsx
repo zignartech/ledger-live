@@ -125,6 +125,9 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
   const location = useLocation();
 
   const mainAccount = getMainAccount(account, parentAccount);
+  if (operation.extra.claimTransactionId) {
+    operation.extra = {};
+  }
   const {
     extra,
     hash,
@@ -641,7 +644,7 @@ type OperationDetailsExtraProps = {
 const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   return Object.entries(extra).map(([key, value]) => {
     if (typeof value === "object" || typeof value === "function") return null;
-    if (extra.isClaiming || extra.unixTime || extra.claimingTransactionId ) return null;
+    if (extra.isClaiming || extra.unixTime || extra.claimingTransactionId) return null;
     return (
       <OpDetailsSection key={key}>
         <OpDetailsTitle>
